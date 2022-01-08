@@ -1,0 +1,1 @@
+rm -fr CMakeFiles/ Makefile CMakeCache.txt

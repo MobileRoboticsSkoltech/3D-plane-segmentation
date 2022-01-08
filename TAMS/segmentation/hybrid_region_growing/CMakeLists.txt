@@ -1,0 +1,9 @@
+#set the default path for built executables to the "bin" directory
+set(EXECUTABLE_OUTPUT_PATH bin)
+#set the default path for built libraries to the "lib" directory
+set(LIBRARY_OUTPUT_PATH lib)
+
+
+include_directories(include)
+add_executable(hybrid_region_growing src/hybrid_region_growing.cc src/main.cpp)
+target_link_libraries(hybrid_region_growing ${PCL_LIBRARIES})
