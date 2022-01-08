@@ -1,0 +1,33 @@
+
+QSlider::focus {
+     background-color: rgba(255,0,0,100);
+}
+
+QSplitter::handle {
+     background-color: rgb(225,225,225);
+     padding: 1px;
+ }
+
+QSplitter::handle:horizontal {
+     background-color: rgb(225,225,225);
+     padding: 1px;
+}
+
+QSplitter::handle:vertical {
+     background-color: rgb(225,225,225);
+     padding: 1px;
+}
+
+QSplitter::handle:pressed {
+     background-color: rgb(225,225,225);
+     padding: 1px;
+}
+
+QFrame {
+     background-color: rgb(245,245,245);
+     color: rgb(10,10,10);
+}
+
+QWidget {
+     font-size: 10pt;
+}
