@@ -11,7 +11,7 @@
 struct PlanePointNormal
 {
 
-    uint id;
+    unsigned int id;
 
     size_t count;
 
@@ -36,7 +36,7 @@ struct PlanePointNormal
 struct PlaneEquation
 {
 
-    uint id;
+    unsigned int id;
 
     real_t a, b, c, d;
 

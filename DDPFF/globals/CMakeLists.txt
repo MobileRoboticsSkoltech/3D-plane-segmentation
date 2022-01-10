@@ -6,12 +6,10 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt5 COMPONENTS Core REQUIRED)
 find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 
-add_library(${PROJECT_NAME} SHARED
-    src/Command.cpp
-    src/Config.cpp
+add_library(${PROJECT_NAME} STATIC
+        src/Config.cpp
 )
 
 target_include_directories(${PROJECT_NAME}
@@ -19,7 +17,6 @@ target_include_directories(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME} PUBLIC
-    Qt5::Core
     Eigen3::Eigen
 )
 

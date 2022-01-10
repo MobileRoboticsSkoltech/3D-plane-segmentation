@@ -3,7 +3,6 @@
 
 #include <cmath>
 #include <limits>
-#include <QColor>
 
 #include "globals/constants.h"
 #include "eigenutils.h"
@@ -82,14 +81,6 @@ namespace utils {
     inline const T &max(const T &a, const T &b) { return (a < b) ? b : a; }
     template <typename T>
     inline const T &bound(const T &l, const T &val, const T &u){ return max(l, min(u, val)); }
-
-    /* Convert color to flat index. */
-    inline size_t rgbIndex(const QColor& color) {
-        return 256 * color.red() + 256 * color.green() + color.blue();
-    }
-    inline size_t rgbIndex(const Pixel& color) {
-        return 256 * color.x() + 256 * color.y() + color.z();
-    }
 
     /*
      * Round v to p places after decimal.

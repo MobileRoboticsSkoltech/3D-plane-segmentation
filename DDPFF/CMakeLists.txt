@@ -1,18 +1,23 @@
-cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.8)
+project(DDPFFAdoptation)
 
-project(DDPFF LANGUAGES CXX)
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
+set(BUILD_SHARED_LIBS TRUE)
 
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(OpenGL_GL_PREFERENCE GLVND)
+find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 
-# Add sub directories
-add_subdirectory(globals)
-add_subdirectory(control)
-add_subdirectory(gui)
-add_subdirectory(scenes)
-add_subdirectory(utils)
 add_subdirectory(rep)
-add_subdirectory(app)
+add_subdirectory(utils)
+add_subdirectory(globals)
+
+add_executable(DDPFFAdoptation main.cpp)
+
+target_link_libraries(${PROJECT_NAME}
+    Eigen3::Eigen
+    Utils
+    Globals
+    Rep
+)
