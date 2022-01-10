@@ -322,12 +322,6 @@ void DDPFF::merge(bool unidir)
         }
 
     } while (mergeOp);
-
-//    if (config.debugLevel == 4) {
-//        for (auto p: mergedPlanes_) {
-//            qDebug() << (*p);
-//        }
-//    }
 }
 
 void DDPFF::reorder()
