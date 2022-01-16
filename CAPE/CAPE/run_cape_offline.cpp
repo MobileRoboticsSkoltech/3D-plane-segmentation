@@ -103,12 +103,12 @@ int main(int argc, char ** argv){
         PATCH_SIZE = atoi(argv[1]);
         sequence = argv[2];
     }else{
-        PATCH_SIZE = 20;
-        sequence = "cy_0";
+        PATCH_SIZE = 16;
+        sequence = "";
     }
 
     stringstream string_buff;
-    string data_path = "../../Data/";
+    string data_path = "input/";
     string_buff<<data_path<<sequence;
 
     // Get intrinsics
@@ -122,23 +122,24 @@ int main(int argc, char ** argv){
     float cx_rgb = K_rgb.at<double>(0,2); float cy_rgb = K_rgb.at<double>(1,2);
 
     // Read frame 1 to allocate and get dimension
-    cv::Mat rgb_img, d_img;
+    cv::Mat d_img;
     int width, height;
     stringstream image_path;
     stringstream depth_img_path;
-    stringstream rgb_img_path;
-    rgb_img_path<<string_buff.str()<<"/rgb_0.png";
+    stringstream save_path;
     depth_img_path<<string_buff.str()<<"/depth_0.png";
+    
 
-    rgb_img = cv::imread(rgb_img_path.str(),cv::IMREAD_COLOR);
+    d_img = cv::imread(depth_img_path.str(),cv::IMREAD_ANYDEPTH);
 
-    if(rgb_img.data){
-        width = rgb_img.cols;
-        height = rgb_img.rows;
+    if(d_img.data){
+        width = d_img.cols;
+        height = d_img.rows;
     }else{
         cout<<"Error loading file";
         return -1;
     }
+
 
     int nr_horizontal_cells = width/PATCH_SIZE;
     int nr_vertical_cells = height/PATCH_SIZE;
@@ -170,8 +171,6 @@ int main(int argc, char ** argv){
 
     cv::Mat_<float> X(height,width);
     cv::Mat_<float> Y(height,width);
-    cv::Mat_<float> X_t(height,width);
-    cv::Mat_<float> Y_t(height,width);
     Eigen::MatrixXf cloud_array(width*height,3);
     Eigen::MatrixXf cloud_array_organized(width*height,3);
 
@@ -204,13 +203,7 @@ int main(int argc, char ** argv){
     while(true){
 
         // Read frame i
-        rgb_img_path.str("");
-        rgb_img_path<<string_buff.str()<<"/rgb_"<<i<<".png";
-        rgb_img = cv::imread(rgb_img_path.str(),cv::IMREAD_COLOR);
-
-        if (!rgb_img.data)
-            break;
-
+        
         cout<<"Frame: "<<i<<endl;
 
         // Read depth image
@@ -221,16 +214,11 @@ int main(int argc, char ** argv){
         d_img.convertTo(d_img, CV_32F);
 
         // Backproject to point cloud
-        X = X_pre.mul(d_img); Y = Y_pre.mul(d_img);
+        X = X_pre.mul(d_img); 
+        Y = Y_pre.mul(d_img);
         cloud_array.setZero();
 
-        // The following transformation+projection is only necessary to visualize RGB with overlapped segments
-        // Transform point cloud to color reference frame
-        X_t = ((float)R_stereo.at<double>(0,0))*X+((float)R_stereo.at<double>(0,1))*Y+((float)R_stereo.at<double>(0,2))*d_img + (float)t_stereo.at<double>(0);
-        Y_t = ((float)R_stereo.at<double>(1,0))*X+((float)R_stereo.at<double>(1,1))*Y+((float)R_stereo.at<double>(1,2))*d_img + (float)t_stereo.at<double>(1);
-        d_img = ((float)R_stereo.at<double>(2,0))*X+((float)R_stereo.at<double>(2,1))*Y+((float)R_stereo.at<double>(2,2))*d_img + (float)t_stereo.at<double>(2);
-
-        projectPointCloud(X_t, Y_t, d_img, U, V, fx_rgb, fy_rgb, cx_rgb, cy_rgb, t_stereo.at<double>(2), cloud_array);
+        projectPointCloud(X, Y, d_img, U, V, fx_rgb, fy_rgb, cx_rgb, cy_rgb, t_stereo.at<double>(2), cloud_array);
 
         cv::Mat_<cv::Vec3b> seg_rz = cv::Mat_<cv::Vec3b>(height,width,cv::Vec3b(0,0,0));
         cv::Mat_<uchar> seg_output = cv::Mat_<uchar>(height,width,uchar(0));
@@ -264,24 +252,24 @@ int main(int argc, char ** argv){
         // Map segments with color codes and overlap segmented image w/ RGB
         uchar * sCode;
         uchar * dColor;
-        uchar * srgb;
+        // uchar * srgb;
         int code;
         for(int r=0; r<  height; r++){
             dColor = seg_rz.ptr<uchar>(r);
             sCode = seg_output.ptr<uchar>(r);
-            srgb = rgb_img.ptr<uchar>(r);
+            // srgb = rgb_img.ptr<uchar>(r);
             for(int c=0; c< width; c++){
                 code = *sCode;
                 if (code>0){
-                    dColor[c*3] =   color_code[code-1][0]/2 + srgb[0]/2;
-                    dColor[c*3+1] = color_code[code-1][1]/2 + srgb[1]/2;
-                    dColor[c*3+2] = color_code[code-1][2]/2 + srgb[2]/2;;
-                }else{
-                    dColor[c*3] =  srgb[0];
-                    dColor[c*3+1] = srgb[1];
-                    dColor[c*3+2] = srgb[2];
+            
+                    dColor[c*3] =   color_code[code-1][0]/2 ;
+                    dColor[c*3+1] = color_code[code-1][1]/2 ;
+                    dColor[c*3+2] = color_code[code-1][2]/2 ;
+
                 }
-                sCode++; srgb++; srgb++; srgb++;
+              
+                sCode++; 
+                
             }
         }
 
@@ -302,9 +290,13 @@ int main(int argc, char ** argv){
             }
         }
         cv::imshow("Seg", seg_rz);
+        
+        save_path.str("");
+        save_path<<"output/segment_"<<i<<".png";
+        cv::imwrite(save_path.str(), seg_rz);
+
         cv::waitKey(1);
         i++;
     }
     return 0;
 }
-
