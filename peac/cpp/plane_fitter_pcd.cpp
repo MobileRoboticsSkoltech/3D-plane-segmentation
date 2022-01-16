@@ -195,7 +195,7 @@ void processOneFrame(pcl::PointCloud<pcl::PointXYZ>& cloud, const std::string& o
 	std::cout<<process_ms<<" ms"<<std::endl;
 
 	//save seg image
-	cv::cvtColor(seg,seg,CV_RGB2BGR);
+	cv::cvtColor(seg,seg,cv::COLOR_RGB2BGR);
 	cv::imwrite(outputFilePrefix+".seg.png", seg);
 	std::cout<<"output: "<<outputFilePrefix<<".seg.png"<<std::endl;
 
@@ -229,7 +229,8 @@ void processOneFrame(pcl::PointCloud<pcl::PointXYZ>& cloud, const std::string& o
 
 int process() {
 	const double unitScaleFactor = global::iniGet<double>("unitScaleFactor", 1.0f);
-	const std::string outputDir = global::iniGet<std::string>("outputDir", ".");
+	std::string outputDirr= global::iniGet<std::string>("outputDir", ".");
+	const std::string outputDir=outputDirr.substr(0, outputDirr.size() - 1);
 	{//create outputDir
 #ifdef _WIN32
 		std::string cmd="mkdir "+outputDir + " 2> NUL";
@@ -291,6 +292,7 @@ int process() {
 	} else {
 		std::string inputDir = global::getFileDir(filelist);
 
+		filelist = filelist.substr(0, filelist.size() - 1);
 		std::ifstream is(filelist.c_str());
 		if (!is.is_open()) {
 			std::cout << "could not open list=" << filelist << std::endl;
@@ -346,7 +348,7 @@ int process() {
 
 int main(const int argc, const char** argv) {
 	if(argc<=1)
-		global::iniLoad("plane_fitter_pcd.ini");
+		global::iniLoad("/app/src/cpp/plane_fitter_pcd.ini");
 	else
 		global::iniLoad(argv[1]);
 	return process();
