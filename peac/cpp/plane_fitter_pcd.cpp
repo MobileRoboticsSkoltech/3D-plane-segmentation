@@ -195,7 +195,7 @@ void processOneFrame(pcl::PointCloud<pcl::PointXYZ>& cloud, const std::string& o
 	std::cout<<process_ms<<" ms"<<std::endl;
 
 	//save seg image
-	cv::cvtColor(seg,seg,CV_RGB2BGR);
+	cv::cvtColor(seg,seg,cv::COLOR_RGB2BGR);
 	cv::imwrite(outputFilePrefix+".seg.png", seg);
 	std::cout<<"output: "<<outputFilePrefix<<".seg.png"<<std::endl;
 
