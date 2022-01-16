@@ -229,7 +229,8 @@ void processOneFrame(pcl::PointCloud<pcl::PointXYZ>& cloud, const std::string& o
 
 int process() {
 	const double unitScaleFactor = global::iniGet<double>("unitScaleFactor", 1.0f);
-	const std::string outputDir = global::iniGet<std::string>("outputDir", ".");
+	std::string outputDirr= global::iniGet<std::string>("outputDir", ".");
+	const std::string outputDir=outputDirr.substr(0, outputDirr.size() - 1);
 	{//create outputDir
 #ifdef _WIN32
 		std::string cmd="mkdir "+outputDir + " 2> NUL";
@@ -291,6 +292,7 @@ int process() {
 	} else {
 		std::string inputDir = global::getFileDir(filelist);
 
+		filelist = filelist.substr(0, filelist.size() - 1);
 		std::ifstream is(filelist.c_str());
 		if (!is.is_open()) {
 			std::cout << "could not open list=" << filelist << std::endl;
