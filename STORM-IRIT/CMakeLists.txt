@@ -22,7 +22,7 @@ if(PDPC_USE_OMP)
     endif()
 endif()
 
-find_package(CGAL REQUIRED)
+find_package(CGAL REQUIRED PATHS "/root/CGAL/build" NO_DEFAULT_PATH)
 set(CGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE true)
 set(CGAL_DISABLE_ROUNDING_MATH_CHECK true) # for valgrind ?
 
