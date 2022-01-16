@@ -346,7 +346,7 @@ int process() {
 
 int main(const int argc, const char** argv) {
 	if(argc<=1)
-		global::iniLoad("plane_fitter_pcd.ini");
+		global::iniLoad("/app/src/cpp/plane_fitter_pcd.ini");
 	else
 		global::iniLoad(argv[1]);
 	return process();
