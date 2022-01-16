@@ -143,7 +143,7 @@ public:
 		double process_ms=timer.toc();
 
 		//blend segmentation with rgb
-		cv::cvtColor(seg,seg,CV_RGB2BGR);
+		cv::cvtColor(seg,seg,cv::COLOR_RGB2BGR);
 		seg=(rgb+seg)/2.0;
 		
 		//show frame rate
