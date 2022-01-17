@@ -1,4 +1,9 @@
-FROM tojiboyevf/perfect:1.0
+FROM ubuntu:18.04
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update
+RUN apt-get install -y cmake pkg-config libeigen3-dev libopencv-dev libpcl-dev
 
 ADD ./peac /app/src
 
