@@ -174,7 +174,6 @@ int main(int argc, char ** argv){
     Eigen::MatrixXf cloud_array(width*height,3);
     Eigen::MatrixXf cloud_array_organized(width*height,3);
 
-    cv::namedWindow("Seg");
 
     // Populate with random color codes
     for(int i=0; i<100;i++){
@@ -289,15 +288,14 @@ int main(int argc, char ** argv){
                 cv::rectangle(seg_rz,  cv::Point(width/2 + 80+15*j,6),cv::Point(width/2 + 90+15*j,16), cv::Scalar(color_code[cylinder_code_offset+j][0],color_code[cylinder_code_offset+j][1],color_code[cylinder_code_offset+j][2]),-1);
             }
         }
-        cv::imshow("Seg", seg_rz);
+        
         
         save_path.str("");
         save_path<<"output/segment_"<<i<<".png";
         cv::imwrite(save_path.str(), seg_rz);
 
-        cv::waitKey(1);
+        
         i++;
     }
     return 0;
 }
-
