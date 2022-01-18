@@ -173,7 +173,8 @@ int main(int argc, char ** argv){
     cv::Mat_<float> Y(height,width);
     Eigen::MatrixXf cloud_array(width*height,3);
     Eigen::MatrixXf cloud_array_organized(width*height,3);
-
+    
+    cv::namedWindow("Seg");
 
     // Populate with random color codes
     for(int i=0; i<100;i++){
@@ -289,12 +290,13 @@ int main(int argc, char ** argv){
             }
         }
         
+        cv::imshow("Seg", seg_rz);
         
         save_path.str("");
         save_path<<"output/segment_"<<i<<".png";
         cv::imwrite(save_path.str(), seg_rz);
 
-        
+        cv::waitKey(1);
         i++;
     }
     return 0;
