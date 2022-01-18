@@ -1,47 +1,36 @@
-# CAPE
-Cylinder and Plane Extraction from Depth Cameras
+# Instruction
+## Options of building the docker image of repo:
 
-Implementation of the method proposed in:  
-P. Proenca and Y. Gao, _Fast Cylinder and Plane Extraction from Depth Cameras for Visual Odometry_, IROS, 2018
-https://arxiv.org/abs/1803.02380
-
-Note: The parameters are fine-tuned for detecting large surfaces with Kinect 1 and Structure sensor for VO. For other applications, these may need to be modified.
-
-## Dependencies
-
-* OpenCV
-* Eigen3
-
-## Data
-
-RGBD Sequences w/ cylinders are available for testing: [Here](https://drive.google.com/drive/folders/1CaVVLF7AQUlsOwFWrx-Fm7zB6wueQBE3?usp=sharing)
-
-Download a .zip file and unzip it into ``./Data``
-
-## Ubuntu Instructions
-Tested with Ubuntu 14.04 & 16.04
-
-To compile, inside the directory ``./CAPE`` which contains the CmakeLists.txt, type:
+1) You can build docker image using current `Dockerfile` in this directory:
 ```
-mkdir build
-cd build
-cmake ..
-make
+docker build -t peac:1.0 .
 ```
-To run the executable, use the following format:
+
+Then finally after creating docker image run following command:
+
+```sudo docker run --rm -ti --privileged --net=host --ipc=host    -e DISPLAY=$DISPLAY    -v /tmp/.X11-unix,/tmp/.X11-unix  --mount src=/pathOfInputFolder,target=/app/build/input,type=bind --mount src=/pathOfOutputFolder,target=/app/build/output,type=bind peac:1.0```
+
+Here `src=/pathOfInputFolder` means the path of dataset that you are going to test and `src=/pathOfOutputFolder` means the path of output folder that you are going to store the result. For example:
+```
+sudo docker run --rm -ti --privileged --net=host --ipc=host    -e DISPLAY=$DISPLAY    -v /tmp/.X11-unix,/tmp/.X11-unix  --mount src=/home/adminlinux/cpf_segmentation/input,target=/app/build/input,type=bind --mount src=/home/adminlinux/cpf_segmentation/output,target=/app/build/output,type=bind peac:1.0
+```
+2) Or you can run ready docker image `tojiboyevf/peac:1.0`
+
+## Testing repo:
+
+If you are using docker image by default the path of working directory will be in `build` folder.
+You can use depth image with `.png` format as a dataset. But images should start with `depth_` and in `calib_params.xml` file you have to write the calibration of IR(infrared) and RGB cameras. Here is the example [link](https://github.com/tojiboyevf/CAPE/tree/master/input). To test the library, use following general command:
 
 ```./cape_offline <cell_size> <sequence_name>```
 
 where the first argument is the cell size in pixels (recommended 20)
-and the second argument is a folder stored in:``./Data``
+and the second argument is a folder stored in:``./input`` that you indicated before runnig docker image.
 that contains the image and calibration files. 
-For example, if the target sequence is the 'tunnel' (assuming this was downloaded as specified above),run:
+For example, if the target sequence is the 'icl-nuim' (assuming this was downloaded as specified above),run:
 
-```./cape_offline 20 tunnel```
+```./cape_offline 16 icl-nuim```
+If you run just ``./cape_offline `` by default cell size in pixels is 16 and reads data directly from `input` folder that you indicated before runnig docker image.
 
-## Windows Instructions
+The result will be stored in `output` folder that you indicated before runnig docker image.
 
-Tested configuration: Windows 8.1 with Visual Studio 12
-
-This version includes already a VC11 project.
-Just make the necessary changes to link the project with OpenCV and Eigen.
+The original repo: https://github.com/pedropro/CAPE
