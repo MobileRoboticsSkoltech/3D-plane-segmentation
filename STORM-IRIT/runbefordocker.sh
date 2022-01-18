@@ -8,6 +8,9 @@ cp -fR app src CMakeLists.txt Plane-Detection-Point-Cloud/
 
 rm -r app src CMakeLists.txt
 
+sudo apt-get update
+sudo apt-get install wget, unzip
+
 wget https://github.com/CGAL/cgal/releases/download/releases%2FCGAL-5.0.2/CGAL-5.0.2.zip
 
 unzip CGAL-5.0.2.zip
