@@ -16,6 +16,8 @@ sudo docker run --rm -ti --privileged --net=host --ipc=host    -e DISPLAY=$DISPL
 ```
 2) Or you can run ready docker image `tojiboyevf/peac:1.0`
 
+If there is a problem with displaying result in docker image like `Gtk-WARNING **: 21:16:20.033: cannot open display: :0` or other errors that related with displaying, then try to run command `xhost +` before running docker image. After finishing all stuff don't forget run `xhost -`.
+
 ## Testing repo:
 
 If you are using docker image by default the path of working directory will be in `build` folder.
