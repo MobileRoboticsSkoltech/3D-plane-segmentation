@@ -37,15 +37,15 @@ The first program `pdpcComputeMultiScaleFeatures` computes surface curvatures an
 The second program `pdpcSegmentation` performs planar region growings at all scales and we get  `data_comp.txt` and `data_seg.txt` files.
 Note that an oriented normal vector is required for each input point. 
 
-2) After that create a new folder to store final result:
+2) After that create a new folder to store the final result:
 ```
 mkdir output/res1
 ```
 Finally, the program `pdpcPostProcess` can perform 3 different operations depending on the given options
 ```
-./pdpcPostProcess -i input/triangles.ply -s output/triangles_seg.txt -c output/triangles_comp.txt -o output/res1/res1 -col -v -range 20 24 25 30 40 42
-./pdpcPostProcess -i input/triangles.ply -s output/triangles_seg.txt -c output/triangles_comp.txt -o output/res2/res2 -col -v -pers 15 20 25
-./pdpcPostProcess -i input/triangles.ply -s output/triangles_seg.txt -c output/triangles_comp.txt -o output/res3/res3 -col -v -scales 5 15 20 25
+./pdpcPostProcess -i input/data.ply -s output/data_seg.txt -c output/data_comp.txt -o output/res1/res1 -col -v -range 20 24 25 30 40 42
+./pdpcPostProcess -i input/data.ply -s output/data_seg.txt -c output/data_comp.txt -o output/res2/res2 -col -v -pers 15 20 25
+./pdpcPostProcess -i input/data.ply -s output/data_seg.txt -c output/data_comp.txt -o output/res3/res3 -col -v -scales 5 15 20 25
 ```
 - `-range birth1 death1 birth2 death2` generates two files showing components that persist in the scale ranges (`birth1`,`death1`) and (`birth2`,`death2`)
 - `-pers pers1 pers2` generates two files showing components that are more persistent than the persistence thresholds `pers1` and `pers2`
