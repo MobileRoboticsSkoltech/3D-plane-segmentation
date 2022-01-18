@@ -12,7 +12,7 @@ Then finally after creating docker image run following command:
 
 Here `src=/pathOfInputFolder` means the path of dataset that you are going to test and `src=/pathOfOutputFolder` means the path of output folder that you are going to store the result. For example:
 ```
-sudo docker run --rm -ti --privileged --net=host --ipc=host    -e DISPLAY=$DISPLAY    -v /tmp/.X11-unix,/tmp/.X11-unix  --mount src=/home/adminlinux/cpf_segmentation/input,target=/app/build/input,type=bind --mount src=/home/adminlinux/cpf_segmentation/output,target=/app/build/output,type=bind cape:1.0
+sudo docker run --rm -ti --privileged --net=host --ipc=host    -e DISPLAY=$DISPLAY    -v /tmp/.X11-unix,/tmp/.X11-unix  --mount src=/home/adminlinux/cape/input,target=/app/build/input,type=bind --mount src=/home/adminlinux/cape/output,target=/app/build/output,type=bind cape:1.0
 ```
 2) Or you can run ready docker image `tojiboyevf/cape:1.0`
 
