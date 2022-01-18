@@ -32,11 +32,12 @@ You can use `.ply` format as a dataset format. To test the library, use followin
 ./pdpcSegmentation -i input/data.ply -s output/data_res_scales.txt -f output/data_res_features.txt -o output/data -v
 ```
 
-The first program `pdpcComputeMultiScaleFeatures` computes surface curvatures and normals from the point cloud at multiple scales and stores them as `.txt` files in `output` folder: `data_res_scales.txt` and `data_res_features.txt`
+The first program `pdpcComputeMultiScaleFeatures` computes surface curvatures and normals from the point cloud at multiple scales and stores them as `.txt` files in `output` folder: `data_res_scales.txt` and `data_res_features.txt`.
+
 The second program `pdpcSegmentation` performs planar region growings at all scales and we get  `data_comp.txt` and `data_seg.txt` files.
 Note that an oriented normal vector is required for each input point. 
 
-2) After that create a new foder to store final result:
+2) After that create a new folder to store final result:
 ```
 mkdir output/res1
 ```
