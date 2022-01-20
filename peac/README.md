@@ -21,7 +21,7 @@ If there is a problem with displaying result in docker image like `Gtk-WARNING *
 ## Testing repo:
 
 If you are using docker image by default the path of working directory will be in `build` folder.
-You can use  `.pcd` format as a dataset format. First you have to write all the `.pcd` files into `lists.txt` and put it with `.pcd` files into `input` folder that you indicated before runnig docker image. Here is the example [link](https://github.com/ai4ce/peac/tree/master/data/andreashaus). To test the library, use following general command:
+You can use  `.pcd` format as a dataset format. First you have to write all the `.pcd` files into `lists.txt` and put it with `.pcd` files into `input` folder that you indicated before runnig docker image. Here is the example [link](https://github.com/ai4ce/peac/tree/master/data/andreashaus). Note that an organized (structured) data is required. To test the library, use following general command:
 
 ```
 ./plane_fitter_pcd
