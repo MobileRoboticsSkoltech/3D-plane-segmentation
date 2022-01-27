@@ -58,7 +58,8 @@ int main(int argc, char** argv){
 
 
   /// Get pcd path from command line
-  std::string pcd_filename = argv[1];
+  std::string pcd_filename ="input/";
+  pcd_filename+=argv[1];
   std::string ext("");
   ext = pcd_filename;
   size_t sep = ext.find_last_of ('.');
@@ -102,20 +103,16 @@ int main(int argc, char** argv){
 
   segmented_cloud_ptr=seg.getSegmentedPointCloud();
 
-  bool output_specified = pcl::console::find_switch (argc, argv, "-o");
+  bool output_specified = true;
   if (output_specified)
   {
     // Check output already exists. Create outputname if not given
-    std::string outputname ("");
-    pcl::console::parse (argc, argv, "-o", outputname);
-    // If no filename is given, get output filename from inputname (strip seperators and file extension)
-    if (outputname.empty () || (outputname.at (0) == '-'))
-    {
-      outputname = pcd_filename;
-      size_t dot = outputname.find_last_of ('.');
-      if (dot != std::string::npos)
-      outputname = outputname.substr (0, dot);
-    }
+    std::string outputname="output/";
+    outputname+=argv[1];
+
+    size_t dot = outputname.find_last_of ('.');
+    if (dot != std::string::npos)
+    outputname = outputname.substr (0, dot);
 
     outputname+="_seg.pcd";
     PCL_INFO ("Saving output\n");
@@ -124,8 +121,8 @@ int main(int argc, char** argv){
   }
 
   /// -----------------------------------|  Visualization  |-----------------------------------
-  bool show_visualization = (not pcl::console::find_switch (argc, argv, "-novis"));
-  if (show_visualization)
+  bool show_visualization = (not pcl::console::find_switch (argc, argv, "--vis"));
+  if (!show_visualization)
   {
     /// Configure Visualizer
     pcl::visualization::PCLVisualizer::Ptr viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
