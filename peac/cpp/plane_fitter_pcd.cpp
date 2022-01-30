@@ -286,10 +286,12 @@ int process(std::string pcd_filename) {
 	showWindow = global::iniGet("showWindow", false);
 	if (showWindow)
 		cv::namedWindow("seg");
-
-	const std::string fname=pcd_filename;
+	
+	std::string input="input/";
+	input+=pcd_filename;
+	const std::string fname=input;
 	pcl::PointCloud<pcl::PointXYZ> cloud;
-	if (pcl::io::loadPCDFile<pcl::PointXYZ>(pcd_filename, cloud)){
+	if (pcl::io::loadPCDFile<pcl::PointXYZ>(fname, cloud)){
 		PCL_ERROR ("ERROR: Could not read input point cloud %s.\n", fname.c_str ());
 		return (3);
 	} else {
