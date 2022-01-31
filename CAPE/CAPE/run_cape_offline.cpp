@@ -102,19 +102,15 @@ int main(int argc, char ** argv){
     if (argc>2){
         PATCH_SIZE = atoi(argv[1]);
         string_buff<<"input/"<<argv[2];
-    } else {
+    }else {
         PATCH_SIZE = 16;
         string_buff<<"input";
     }
-    
     for (int i = 1; i < argc; ++i) {
         if (std::string(argv[i]) == "--vis") {
             show_visualization=true;
         } 
     }
-
-    
-
     // Get intrinsics
     cv::Mat K_rgb, K_ir, dist_coeffs_rgb, dist_coeffs_ir, R_stereo, t_stereo;
     stringstream calib_path;
@@ -176,9 +172,6 @@ int main(int argc, char ** argv){
     cv::Mat_<float> Y(height,width);
     Eigen::MatrixXf cloud_array(width*height,3);
     Eigen::MatrixXf cloud_array_organized(width*height,3);
-
-    
-
     // Populate with random color codes
     for(int i=0; i<100;i++){
         cv::Vec3b color;
@@ -187,7 +180,6 @@ int main(int argc, char ** argv){
         color[2]=rand()%255;
         color_code.push_back(color);
     }
-
     // Add specific colors for planes
     color_code[0][0] = 0; color_code[0][1] = 0; color_code[0][2] = 255;
     color_code[1][0] = 255; color_code[1][1] = 0; color_code[1][2] = 204;
@@ -205,11 +197,11 @@ int main(int argc, char ** argv){
     if ((dir = opendir (string_buff.str().c_str())) != NULL) {
     while ((ent = readdir (dir)) != NULL) {
         if(boost::algorithm::contains(ent->d_name, ".png")) frame_num++;
-    }
-    closedir (dir);
-    } else {
-    perror ("could not open directory");
-    return EXIT_FAILURE;
+        }
+        closedir (dir);
+    }else {
+        perror ("could not open directory");
+        return EXIT_FAILURE;
     }
 
     // Initialize CAPE
@@ -299,18 +291,14 @@ int main(int argc, char ** argv){
                 cv::rectangle(seg_rz,  cv::Point(width/2 + 80+15*j,6),cv::Point(width/2 + 90+15*j,16), cv::Scalar(color_code[cylinder_code_offset+j][0],color_code[cylinder_code_offset+j][1],color_code[cylinder_code_offset+j][2]),-1);
             }
         }
-        
-
         save_path.str("");
         save_path<<"output/segment_"<<i<<".png";
         cv::imwrite(save_path.str(), seg_rz);
-
         if(show_visualization){
             cv::namedWindow("Seg");
             cv::imshow("Seg", seg_rz);
             cv::waitKey(1);
-        }
-        
+        }       
         i++;
     }
     return 0;
