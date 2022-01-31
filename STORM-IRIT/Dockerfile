@@ -5,7 +5,6 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update
 RUN apt-get install -y cmake pkg-config  wget unzip
 
-
 #CGAL installation:
 RUN apt-get install -y libgmp-dev libmpfr-dev libboost-all-dev
 
@@ -25,14 +24,10 @@ RUN cmake .. && make
 
 ENV CGAL_DIR "/root/CGAL"
 
+#Building STORM IRIT package
+ADD ./src /app/src/src
 
-WORKDIR /app/src/src
-
-ADD ./src .
-
-WORKDIR /app/src/app
-
-ADD ./app .
+ADD ./app /app/src/app
 
 ADD CMakeLists.txt /app/src
 
