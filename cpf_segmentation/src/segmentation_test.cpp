@@ -55,9 +55,6 @@ int main(int argc, char** argv){
 
   PCL_INFO ("Loading pointcloud\n");
   pcl::PointCloud<PointT>::Ptr input_cloud_ptr (new pcl::PointCloud<PointT>);
-
-
-  /// Get pcd path from command line
   std::string pcd_filename ="input/";
   pcd_filename+=argv[1];
   std::string ext("");
