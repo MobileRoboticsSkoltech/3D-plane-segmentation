@@ -1,3 +1,8 @@
+/*
+ * Copyright 2018 Pedro Proenza <p.proenca@surrey.ac.uk> (University of Surrey)
+ *
+ */
+
 #include <iostream>
 #include <cstdio>
 #define _USE_MATH_DEFINES
@@ -5,9 +10,9 @@
 #include <opencv2/opencv.hpp>
 #include <Eigen/Dense>
 #include "CAPE.h"
-#include<string>
-#include<dirent.h>
-#include<boost/algorithm/string.hpp>
+#include <string>
+#include <dirent.h>
+#include <boost/algorithm/string.hpp>
 
 using namespace std;
 
@@ -95,7 +100,7 @@ void organizePointCloudByCell(Eigen::MatrixXf & cloud_in, Eigen::MatrixXf & clou
 
 int main(int argc, char ** argv){
 
-    bool show_visualization=false;
+    bool show_visualization= false;
     stringstream string_buff;
 
     int PATCH_SIZE;
@@ -108,7 +113,7 @@ int main(int argc, char ** argv){
     }
     for (int i = 1; i < argc; ++i) {
         if (std::string(argv[i]) == "--vis") {
-            show_visualization=true;
+            show_visualization = true;
         } 
     }
     // Get intrinsics
@@ -191,7 +196,7 @@ int main(int argc, char ** argv){
     color_code[52][0] = 0; color_code[52][1] = 255; color_code[52][2] = 51;
     color_code[53][0] = 153; color_code[53][1] = 0; color_code[53][2] = 255;
 
-    int frame_num=0;
+    int frame_num = 0;
     DIR *dir;
     struct dirent *ent;
     if ((dir = opendir (string_buff.str().c_str())) != NULL) {
@@ -207,7 +212,7 @@ int main(int argc, char ** argv){
     // Initialize CAPE
     plane_detector = new CAPE(height, width, PATCH_SIZE, PATCH_SIZE, cylinder_detection, COS_ANGLE_MAX, MAX_MERGE_DIST);
 
-    int i=0;
+    int i = 0;
     while(i<frame_num){
 
         // Read frame i
@@ -291,6 +296,7 @@ int main(int argc, char ** argv){
                 cv::rectangle(seg_rz,  cv::Point(width/2 + 80+15*j,6),cv::Point(width/2 + 90+15*j,16), cv::Scalar(color_code[cylinder_code_offset+j][0],color_code[cylinder_code_offset+j][1],color_code[cylinder_code_offset+j][2]),-1);
             }
         }
+
         save_path.str("");
         save_path<<"output/segment_"<<i<<".png";
         cv::imwrite(save_path.str(), seg_rz);
@@ -298,7 +304,8 @@ int main(int argc, char ** argv){
             cv::namedWindow("Seg");
             cv::imshow("Seg", seg_rz);
             cv::waitKey(1);
-        }       
+        }   
+            
         i++;
     }
     return 0;
