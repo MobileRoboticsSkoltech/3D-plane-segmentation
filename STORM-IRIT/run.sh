@@ -2,14 +2,16 @@
 
 set -ex
 
-./pdpcComputeMultiScaleFeatures -i input/$1 -v -o output/output
-./pdpcSegmentation -i input/$1 -s output/output_scales.txt -f output/output_features.txt -o output/output -v
+filename="${1%.*}"
 
-mkdir output/res1 output/res2 output/res3
+./pdpcComputeMultiScaleFeatures -i input/$1 -v -o output/$filename
+./pdpcSegmentation -i input/$1 -s output/"${filename}_scales.txt" -f output/"${filename}_features.txt" -o output/$filename -v
 
-./pdpcPostProcess -i input/$1 -s output/output_seg.txt -c output/output_comp.txt -o output/res1/res1 -col -v -range 20 24 25 30 40 42
+mkdir output/range output/pers output/scales
 
-./pdpcPostProcess -i input/$1 -s output/output_seg.txt -c output/output_comp.txt -o output/res2/res2 -col -v -pers 15 20 25
+./pdpcPostProcess -i input/$1 -s output/"${filename}_seg.txt" -c output/"${filename}_comp.txt" -o output/range/$filename -col -v -range 20 24 25 30 40 42
 
-./pdpcPostProcess -i input/$1 -s output/output_seg.txt -c output/output_comp.txt -o output/res3/res3 -col -v -scales 5 15 20 25
+./pdpcPostProcess -i input/$1 -s output/"${filename}_seg.txt" -c output/"${filename}_comp.txt" -o output/pers/$filename -col -v -pers 15 20 25
+
+./pdpcPostProcess -i input/$1 -s output/"${filename}_seg.txt" -c output/"${filename}_comp.txt" -o output/scales/$filename -col -v -scales 5 15 20 25
 
