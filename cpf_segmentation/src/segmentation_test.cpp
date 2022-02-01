@@ -55,8 +55,8 @@ int main(int argc, char** argv){
 
   PCL_INFO ("Loading pointcloud\n");
   pcl::PointCloud<PointT>::Ptr input_cloud_ptr (new pcl::PointCloud<PointT>);
-  std::string pcd_filename ="input/";
-  pcd_filename+=argv[1];
+  std::string pcd_filename = "input/";
+  pcd_filename += argv[1];
   std::string ext("");
   ext = pcd_filename;
   size_t sep = ext.find_last_of ('.');
@@ -104,8 +104,8 @@ int main(int argc, char** argv){
   if (output_specified)
   {
     // Check output already exists. Create outputname if not given
-    std::string outputname="output/";
-    outputname+=argv[1];
+    std::string outputname = "output/";
+    outputname += argv[1];
 
     size_t dot = outputname.find_last_of ('.');
     if (dot != std::string::npos)
