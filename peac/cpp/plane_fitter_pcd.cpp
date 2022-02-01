@@ -286,7 +286,8 @@ int process(std::string pcd_filename) {
 	showWindow = global::iniGet("showWindow", false);
 	if (showWindow)
 		cv::namedWindow("seg");
-	const std::string fname="input/"+pcd_filename;
+		
+	const std::string fname = "input/"+pcd_filename;
 	pcl::PointCloud<pcl::PointXYZ> cloud;
 	if (pcl::io::loadPCDFile<pcl::PointXYZ>(fname, cloud)){
 		PCL_ERROR ("ERROR: Could not read input point cloud %s.\n", fname.c_str ());
@@ -306,7 +307,7 @@ int process(std::string pcd_filename) {
 }
 
 int main(const int argc, const char** argv) {
-	if(argc==1)
+	if(argc==2)
 		global::iniLoad("/app/src/cpp/plane_fitter_pcd.ini");
 	else if(argc==3)
 		global::iniLoad(argv[2]); 
