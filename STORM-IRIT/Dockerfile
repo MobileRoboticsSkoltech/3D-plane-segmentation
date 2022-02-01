@@ -10,13 +10,13 @@ RUN apt-get install -y libgmp-dev libmpfr-dev libboost-all-dev
 
 WORKDIR /root
 
-RUN wget https://github.com/CGAL/cgal/releases/download/releases%2FCGAL-5.0.2/CGAL-5.0.2.zip
-
-RUN unzip CGAL-5.0.2.zip
-
-RUN rm CGAL-5.0.2.zip
-
-RUN mv CGAL-5.0.2 CGAL
+RUN wget https://github.com/CGAL/cgal/releases/download/releases%2FCGAL-5.0.2/CGAL-5.0.2.zip \
+    &&\
+    unzip CGAL-5.0.2.zip \
+    &&\
+    rm CGAL-5.0.2.zip \
+    &&\
+    mv CGAL-5.0.2 CGAL
 
 WORKDIR /root/CGAL/build
 
