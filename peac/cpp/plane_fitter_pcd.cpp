@@ -287,7 +287,7 @@ int process(std::string pcd_filename) {
 	if (showWindow)
 		cv::namedWindow("seg");
 		
-	const std::string fname = "input/"+pcd_filename;
+	const std::string fname = "input/" + pcd_filename;
 	pcl::PointCloud<pcl::PointXYZ> cloud;
 	if (pcl::io::loadPCDFile<pcl::PointXYZ>(fname, cloud)){
 		PCL_ERROR ("ERROR: Could not read input point cloud %s.\n", fname.c_str ());
@@ -299,7 +299,7 @@ int process(std::string pcd_filename) {
 			(float)unitScaleFactor)));
 		std::cout<<fname<<std::endl;
 
-		std::string outputFilePrefix = outputDir+"/"+global::getNameNoExtension(fname);
+		std::string outputFilePrefix = outputDir + "/" + global::getNameNoExtension(fname);
 		processOneFrame(cloud, outputFilePrefix);
 	}
 
