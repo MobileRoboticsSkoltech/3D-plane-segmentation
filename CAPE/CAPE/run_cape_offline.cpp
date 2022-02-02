@@ -100,16 +100,16 @@ void organizePointCloudByCell(Eigen::MatrixXf & cloud_in, Eigen::MatrixXf & clou
 
 int main(int argc, char ** argv){
 
-    bool show_visualization= false;
+    bool show_visualization = false;
     stringstream string_buff;
 
     int PATCH_SIZE;
     if (argc>2){
         PATCH_SIZE = atoi(argv[1]);
-        string_buff<<"input/"<<argv[2];
+        string_buff << "input/" << argv[2];
     }else {
         PATCH_SIZE = 16;
-        string_buff<<"input";
+        string_buff << "input";
     }
     for (int i = 1; i < argc; ++i) {
         if (std::string(argv[i]) == "--vis") {
@@ -200,11 +200,11 @@ int main(int argc, char ** argv){
     DIR *dir;
     struct dirent *ent;
     if ((dir = opendir (string_buff.str().c_str())) != NULL) {
-    while ((ent = readdir (dir)) != NULL) {
-        if(boost::algorithm::contains(ent->d_name, ".png")) frame_num++;
+        while ((ent = readdir (dir)) != NULL) {
+            if(boost::algorithm::contains(ent->d_name, ".png")) frame_num++;
         }
         closedir (dir);
-    }else {
+    } else {
         perror ("could not open directory");
         return EXIT_FAILURE;
     }
@@ -213,7 +213,7 @@ int main(int argc, char ** argv){
     plane_detector = new CAPE(height, width, PATCH_SIZE, PATCH_SIZE, cylinder_detection, COS_ANGLE_MAX, MAX_MERGE_DIST);
 
     int i = 0;
-    while(i<frame_num){
+    while(i < frame_num){
 
         // Read frame i
         cout<<"Frame: "<<i<<endl;
@@ -298,9 +298,9 @@ int main(int argc, char ** argv){
         }
 
         save_path.str("");
-        save_path<<"output/segment_"<<i<<".png";
+        save_path << "output/segment_" << i << ".png";
         cv::imwrite(save_path.str(), seg_rz);
-        if(show_visualization){
+        if (show_visualization) {
             cv::namedWindow("Seg");
             cv::imshow("Seg", seg_rz);
             cv::waitKey(1);
