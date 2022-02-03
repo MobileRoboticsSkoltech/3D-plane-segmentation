@@ -66,7 +66,7 @@ typedef pcl::PointCloud<pcl::PointXYZRGB> CloudXYZRGB;
 namespace global {
 std::map<std::string, std::string> ini;
 PlaneFitter pf;
-bool showWindow = true;
+bool showWindow = false;
 
 #ifdef _WIN32
 const char filesep = '\\';
@@ -227,9 +227,9 @@ void processOneFrame(pcl::PointCloud<pcl::PointXYZ>& cloud, const std::string& o
 	}
 }
 
-int process() {
+int process(std::string pcd_filename) {
 	const double unitScaleFactor = global::iniGet<double>("unitScaleFactor", 1.0f);
-	const std::string outputDir = global::iniGet<std::string>("outputDir", ".");
+	const std::string outputDir = "output";
 	{//create outputDir
 #ifdef _WIN32
 		std::string cmd="mkdir "+outputDir + " 2> NUL";
@@ -239,7 +239,6 @@ int process() {
 		system(cmd.c_str());
 		std::cout << "create:" << outputDir << std::endl;
 	}
-
 	using global::pf;
 	//setup fitter
 	pf.minSupport = global::iniGet<int>("minSupport", 3000);
@@ -282,72 +281,35 @@ int process() {
 	bool is_debug = global::iniGet<bool>("debug", 0);
 	int loop_cnt = global::iniGet<int>("loop", 0); //0: no loop; -1: infinite loop; >0: n loops
 
-	std::vector<std::string> fnamelist;
-	std::string filelist = global::iniGet<std::string>("list","list.txt");
-
-	if (filelist.find(".pcd") != std::string::npos) {
-		fnamelist.push_back(filelist); //support list=test.pcd to only input a single file
-		loop_cnt = global::iniGet<int>("loop", -1); //by default turn on infinite loop (-1) mode
-	} else {
-		std::string inputDir = global::getFileDir(filelist);
-
-		std::ifstream is(filelist.c_str());
-		if (!is.is_open()) {
-			std::cout << "could not open list=" << filelist << std::endl;
-			return -1;
-		}
-
-		while (is) {
-			std::string fname;
-			std::getline(is, fname);
-			if (fname.empty()) continue;
-			fname = inputDir + global::filesep + fname;
-			fnamelist.push_back(fname);
-		}
-	}
 
 	using global::showWindow;
-	showWindow = global::iniGet("showWindow", true);
+	showWindow = global::iniGet("showWindow", false);
 	if (showWindow)
 		cv::namedWindow("seg");
+		
+	const std::string fname = "input/" + pcd_filename;
+	pcl::PointCloud<pcl::PointXYZ> cloud;
+	if (pcl::io::loadPCDFile<pcl::PointXYZ>(fname, cloud)){
+		PCL_ERROR ("ERROR: Could not read input point cloud %s.\n", fname.c_str ());
+		return 3;
+	} else {
+		pcl::transformPointCloud<pcl::PointXYZ>(
+			cloud, cloud,
+			Eigen::Affine3f(Eigen::UniformScaling<float>(
+			(float)unitScaleFactor)));
+		std::cout<<fname<<std::endl;
 
-	int idx = 0;
-	while(true)
-	{
-		if (idx >= fnamelist.size()) {
-			if (loop_cnt != 0) {
-				idx = 0;
-				if (loop_cnt > 0) --loop_cnt;
-			}
-			else break;
-		}
-
-		const std::string& fname = fnamelist[idx];
-		pcl::PointCloud<pcl::PointXYZ> cloud;
-		if(pcl::io::loadPCDFile(fname, cloud) <0) {
-			std::cout<<"fail to load: "<<fname<<std::endl;
-		} else {
-			pcl::transformPointCloud<pcl::PointXYZ>(
-				cloud, cloud,
-				Eigen::Affine3f(Eigen::UniformScaling<float>(
-				(float)unitScaleFactor)));
-			std::cout<<fname<<std::endl;
-
-			std::string outputFilePrefix = outputDir+global::filesep+global::getNameNoExtension(fname);
-			processOneFrame(cloud, outputFilePrefix);
-		}
-
-		if(!is_debug) ++idx;
-		else break; //debug mode always process the first file only and ignore loop
+		std::string outputFilePrefix = outputDir + "/" + global::getNameNoExtension(fname);
+		processOneFrame(cloud, outputFilePrefix);
 	}
 
 	return 0;
 }
 
 int main(const int argc, const char** argv) {
-	if(argc<=1)
-		global::iniLoad("plane_fitter_pcd.ini");
-	else
-		global::iniLoad(argv[1]);
-	return process();
+	if(argc==2)
+		global::iniLoad("/app/src/cpp/plane_fitter_pcd.ini");
+	else if(argc==3)
+		global::iniLoad(argv[2]); 
+	return process(argv[1]);
 }
