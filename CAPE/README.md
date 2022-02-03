@@ -1,47 +1,47 @@
-# CAPE
-Cylinder and Plane Extraction from Depth Cameras
+# Instruction
+## Options of building the docker image of repo:
 
-Implementation of the method proposed in:  
-P. Proenca and Y. Gao, _Fast Cylinder and Plane Extraction from Depth Cameras for Visual Odometry_, IROS, 2018
-https://arxiv.org/abs/1803.02380
-
-Note: The parameters are fine-tuned for detecting large surfaces with Kinect 1 and Structure sensor for VO. For other applications, these may need to be modified.
-
-## Dependencies
-
-* OpenCV
-* Eigen3
-
-## Data
-
-RGBD Sequences w/ cylinders are available for testing: [Here](https://drive.google.com/drive/folders/1CaVVLF7AQUlsOwFWrx-Fm7zB6wueQBE3?usp=sharing)
-
-Download a .zip file and unzip it into ``./Data``
-
-## Ubuntu Instructions
-Tested with Ubuntu 14.04 & 16.04
-
-To compile, inside the directory ``./CAPE`` which contains the CmakeLists.txt, type:
+1) You can build docker image using current `Dockerfile` in this directory:
 ```
-mkdir build
-cd build
-cmake ..
-make
+docker build -t cape:1.0 .
 ```
-To run the executable, use the following format:
+2) Or you can run ready docker image `tojiboyevf/cape:1.0`
 
-```./cape_offline <cell_size> <sequence_name>```
+Then finally after building docker image run following command:
 
-where the first argument is the cell size in pixels (recommended 20)
-and the second argument is a folder stored in:``./Data``
-that contains the image and calibration files. 
-For example, if the target sequence is the 'tunnel' (assuming this was downloaded as specified above),run:
+```
+sudo docker run --rm  --mount src=/pathOfInputFolder,target=/app/build/input,type=bind --mount src=/pathOfOutputFolder,target=/app/build/output,type=bind cape:1.0
+```
 
-```./cape_offline 20 tunnel```
+Here `src=/pathOfInputFolder` means the path of dataset that you are going to test and `src=/pathOfOutputFolder` means the path of output folder that you are going to store the result. For example:
 
-## Windows Instructions
+```
+sudo docker run --rm   --mount src=/home/adminlinux/cape/input,target=/app/build/input,type=bind --mount src=/home/adminlinux/cape/output,target=/app/build/output,type=bind cape:1.0 
+```
 
-Tested configuration: Windows 8.1 with Visual Studio 12
+If you want to see visualization then add parameter `--vis` at the end. You have to give permission so run commad first `xhost +` and add other parameters in docker run command:
+```
+xhost +
 
-This version includes already a VC11 project.
-Just make the necessary changes to link the project with OpenCV and Eigen.
+sudo docker run --rm  --privileged --net=host --ipc=host    -e DISPLAY=$DISPLAY    -v /tmp/.X11-unix,/tmp/.X11-unix  --mount src=/home/adminlinux/cape/input,target=/app/build/input,type=bind --mount src=/home/adminlinux/cape/output,target=/app/build/output,type=bind cape:1.0 --vis
+```
+
+If you want to change pixel size and read files in another folder in input directory then you add pixel size and folder name after file name. For example:
+
+```
+sudo docker run --rm   --mount src=/home/adminlinux/cape/input,target=/app/build/input,type=bind --mount src=/home/adminlinux/cape/output,target=/app/build/output,type=bind cape:1.0 16 icm-nuim
+```
+
+If you want to see visualization in with another pixel size and another data in folder then run following command:
+
+```
+xhost +
+
+sudo docker run --rm  --privileged --net=host --ipc=host    -e DISPLAY=$DISPLAY    -v /tmp/.X11-unix,/tmp/.X11-unix  --mount src=/home/adminlinux/cape/input,target=/app/build/input,type=bind --mount src=/home/adminlinux/cape/output,target=/app/build/output,type=bind cape:1.0 16 icm-nuim --vis
+```
+
+
+You can use depth image with `.png` format as a dataset. But images should start with `depth_` and in `calib_params.xml` file you have to write the calibration of IR(infrared) and RGB cameras. Here is the example [link](https://github.com/tojiboyevf/CAPE/tree/master/input). 
+
+The original repo: https://github.com/pedropro/CAPE
+
