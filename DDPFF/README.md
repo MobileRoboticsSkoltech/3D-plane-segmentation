@@ -1,10 +1,12 @@
 # Instruction
 ## Building the docker image of repo:
 
-You can build docker image using current `Dockerfile` in this directory:
+1) You can build docker image using current `Dockerfile` in this directory:
 ```
 docker build -t ddpff:1.0 .
 ```
+
+2) Or you can run ready docker image `tojiboyevf/ddpff:1.0`
 
 Then finally after building docker image run following command:
 
