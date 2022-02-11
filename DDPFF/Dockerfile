@@ -22,6 +22,6 @@ WORKDIR /app/build
 
 RUN cmake ../src && make
 
-ADD run/ .
+ADD scripts/ .
 
 ENTRYPOINT ["bash", "run.sh"]
