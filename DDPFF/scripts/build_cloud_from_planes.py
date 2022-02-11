@@ -15,9 +15,16 @@ if __name__ == '__main__':
     
         
     colors = np.array(pcd.colors)
-
+    s = set()
     for plane_indices in planes:
+        
         col = np.random.uniform(0,1, size=(1,3))
+        
+        while tuple(col[0]) in s:
+            col = np.random.uniform(0,1, size=(1,3))
+        
+        s.add(tuple(col[0]))
+
         if plane_indices.size > 0:
             colors[plane_indices] = col
 
