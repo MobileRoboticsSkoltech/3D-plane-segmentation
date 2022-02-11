@@ -3,12 +3,10 @@
 
 #include "rep/planarrepresentation.h"
 #include "globals/constants.h"
-#include "utils/ColorUtil.h"
 #include "utils/utilities.h"
 
 #include <random>
 #include <memory>
-#include <QPainter>
 #include <set>
 #include <unordered_map>
 #include <functional>
@@ -26,7 +24,6 @@ struct PlaneSegParams {
     Vec2i accumulator2D; // Keep a running sum of pixels in the plane.
     Vec3 point, normal; // The plane is represented in point-normal form using its centroid.
     Vec3 accumulator3D; // Keep a running sum of points in the plane.
-    QColor color; // The color assigned to the plane.
     std::unordered_set<size_t> neighbours; // A list of immediate neighbours of this plane.
     std::unordered_set<size_t> disconnected; // List of erstwhile neighbours.
     std::vector<size_t> inliers; // List of plane inlier indices.
@@ -37,15 +34,11 @@ struct PlaneSegParams {
         count = 0; planeId = 0;
         seedIndex = 0; maxDepth = 0;
         point.fill(0); normal.fill(0); accumulator3D.fill(0);
-        color.setRed(0); color.setGreen(0); color.setBlue(0);
         mergeWith.clear(); neighbours.clear();
         inliers.resize(0);
     }
 
 };
-
-QDebug operator<<(QDebug dbg, const PlaneSegParams &o);
-
 
 /*
  * Depth dependent planar flood fill.
@@ -60,8 +53,7 @@ public:
         sampleFactor_(sampleFactor),
         height_(IMAGE_HEIGHT / sampleFactor),
         width_(IMAGE_WIDTH / sampleFactor),
-        bufferSize_(height_ * width_),
-        colorGenerator_(HueSpread(hSpread), SaturationSpread(sSpread), ValueSpread(vSpread))
+        bufferSize_(height_ * width_)
     {}
 
     void init() override;
@@ -69,10 +61,6 @@ public:
     void clear() override;
 
     void compute() override;
-
-    void draw() const override;
-
-    void draw(QPainter* painter) const override;
 
     std::vector<unsigned_t> getLabels() override;
 
@@ -187,9 +175,6 @@ private:
     std::vector<PlaneSegParams> mutualPlanes_;
 #endif
 
-    /* Used to generate random colors. */
-    mutable RandomColorGenerator colorGenerator_;
-
 #if DEBUG_DDPFF==1
     /* Seed point trackers. */
     std::vector<size_t> seedIndices_; // Flat indices of seeds.
@@ -252,28 +237,6 @@ private:
 
     /* Remove plane indices from neighbour lists in cases where they cannot be merged. */
     void disconnectUnmergeableNeighbours();
-
-    /* DEBUGGING: Draw the flood seeds as points. */
-    void drawSeedPoints() const;
-    void drawSeedPoints(QPainter* painter) const;
-
-    /* Draw the unmerged planes. */
-    void drawUnmergedPlanes() const;
-    void drawUnmergedPlanes(QPainter* painter) const;
-
-    /* Draw the merged planes. */
-    void drawMergedPlanes() const;
-    void drawMergedPlanes(QPainter* painter) const;
-
-    /* Draw unmarked segments; debugging. */
-    void drawUnmarkedSegments(QPainter *painter) const;
-
-    /* Draw labels before gaps are plugged. */
-    void drawGapLabels() const;
-    void drawGapLabels(QPainter *painter) const;
-
-    void drawUnorderedPlanes() const;
-    void drawUnorderedPlanes(QPainter *painter) const;
 };
 
 #endif // DDPFF_H

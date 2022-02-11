@@ -4,7 +4,6 @@
 #include <math.h>
 #include <cstdint>
 #include <limits>
-#include <QMutex>
 #include <array>
 #include <cstdlib>
 #include <eigen3/Eigen/Core>
@@ -38,8 +37,6 @@ inline const real_t ASPECT_RATIO = IMAGE_WIDTH / IMAGE_HEIGHT;
 inline const int SAMPLE_FACTOR = 1;
 inline const int NUMBER_OF_POINTS = IMAGE_HEIGHT*IMAGE_WIDTH;
 
-inline static QMutex gMutex;
-
 using Vec3 = Eigen::Matrix<real_t,3,1>;
 using Vec2 = Eigen::Matrix<real_t,2,1>;
 using Vec2u = Eigen::Matrix<unsigned_t,2,1>;
@@ -47,7 +44,7 @@ using Vec2i = Eigen::Matrix<integer_t,2,1>;
 using Rot = Eigen::Quaternion<real_t>;
 using Trans = Eigen::Translation<real_t, 3>;
 using Transform3D = Eigen::Transform<real_t, 3, Eigen::Affine>;
-using Pixel = Eigen::Matrix<uchar,3,1>;
+using Pixel = Eigen::Matrix<unsigned char,3,1>;
 typedef std::array<Vec3, NUMBER_OF_POINTS> pointBuffer_t;
 typedef std::array<Vec3, NUMBER_OF_POINTS> normalBuffer_t;
 typedef std::array<Pixel, NUMBER_OF_POINTS> colorBuffer_t;

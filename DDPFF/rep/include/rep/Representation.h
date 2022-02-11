@@ -4,7 +4,6 @@
 #include "globals/constants.h"
 
 #include <memory>
-#include <QPainter>
 
 using T_ptr_t = Transform3D*;
 using pointBuffer_ptr_t = pointBuffer_t*;
@@ -16,26 +15,13 @@ class Representation{
 protected:
 
     /*
-     * The camera transforms w.r.t to some global coordinate frame.
-    */
-    T_ptr_t T_ptr, T_t_ptr, invT_ptr, invT_t_ptr;
-
-    /*
      * The buffers needed by the representations.
     */
-    pointBuffer_ptr_t pBuf_ptr;
-    colorBuffer_ptr_t cBuf_ptr;
-    depthBuffer_ptr_t dBuf_ptr;
+    pointBuffer_ptr_t pBuf_ptr = nullptr;
+    colorBuffer_ptr_t cBuf_ptr = nullptr;
+    depthBuffer_ptr_t dBuf_ptr = nullptr;
 
 public:
-
-    /*
-     * Set the requisite transformations. This allows the representation to be calculated in some global fixed frame.
-    */
-    void setTransforms(T_ptr_t T, T_ptr_t T_t, T_ptr_t invT, T_ptr_t invT_t) {
-        this->T_ptr = T; this->T_t_ptr = T_t; this->invT_ptr = invT; this->invT_t_ptr = invT_t;
-    }
-
     /*
      * Set the requisite buffers. These buffers contain the raw data on which the represenation is based.
     */
@@ -59,10 +45,6 @@ public:
     virtual void compute() = 0;
 
     virtual ~Representation() {}
-
-    virtual void draw() const = 0;
-
-    virtual void draw(QPainter* painter) const = 0;
 };
 
 #endif // REPRESENTATION_H
