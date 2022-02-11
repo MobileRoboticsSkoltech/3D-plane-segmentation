@@ -18,10 +18,10 @@ if __name__ == '__main__':
     s = set()
     for plane_indices in planes:
         
-        col = np.random.uniform(0,1, size=(1,3))
+        col = np.random.uniform(0, 1, size=(1,3))
         
         while tuple(col[0]) in s:
-            col = np.random.uniform(0,1, size=(1,3))
+            col = np.random.uniform(0, 1, size=(1,3))
         
         s.add(tuple(col[0]))
 
