@@ -1,4 +1,5 @@
 import sys
+import os
 import numpy as np
 import open3d as o3d
 
@@ -15,8 +16,9 @@ if __name__ == '__main__':
     
         
     colors = np.array(pcd.colors)
+    labels = np.zeros(colors.shape[0], dtype=int)
     s = set()
-    for plane_indices in planes:
+    for index, plane_indices in enumerate(planes):
         
         col = np.random.uniform(0, 1, size=(1,3))
         
@@ -27,9 +29,11 @@ if __name__ == '__main__':
 
         if plane_indices.size > 0:
             colors[plane_indices] = col
+            labels[plane_indices] = index + 1
 
     pcd.colors = o3d.utility.Vector3dVector(colors)
 
     filename = sys.argv[1].split('.')[0]
 
-    o3d.io.write_point_cloud('output/' + filename + '_result.pcd', pcd)
+    np.save(os.path.join('output', "{}.npy".format(filename)), labels)
+    o3d.io.write_point_cloud(os.path.join('output', "{}.pcd".format(filename)), pcd)
