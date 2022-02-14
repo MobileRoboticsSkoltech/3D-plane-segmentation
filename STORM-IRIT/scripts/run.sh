@@ -8,18 +8,24 @@ process(){
     path=output/$filename
     
     python3 preprocess_cloud.py $base_name
-    ./pdpcComputeMultiScaleFeatures -i $path/"${filename}.ply" -v -o $path/$filename
-    ./pdpcSegmentation -i $path/"${filename}.ply" -s $path/"${filename}_scales.txt" -f $path/"${filename}_features.txt" -o $path/$filename -v
+    ./pdpcComputeMultiScaleFeatures -i "${filename}.ply" -v -o $path/$filename
+    ./pdpcSegmentation -i "${filename}.ply" -s $path/"${filename}_scales.txt" -f $path/"${filename}_features.txt" -o $path/$filename -v
 
-    # mkdir output/"${filename}_range" output/"${filename}_pers" output/"${filename}_scales"
+    ./pdpcPostProcess -i "${filename}.ply" -s $path/"${filename}_seg.txt" -c $path/"${filename}_comp.txt" -o $path/"${filename}_range" -col -v -range 20 24 25 30 40 42
 
-    ./pdpcPostProcess -i $path/"${filename}.ply" -s $path/"${filename}_seg.txt" -c $path/"${filename}_comp.txt" -o $path/"${filename}_range"/$filename -col -v -range 20 24 25 30 40 42
+    ./pdpcPostProcess -i "${filename}.ply" -s $path/"${filename}_seg.txt" -c $path/"${filename}_comp.txt" -o $path/"${filename}_pers" -col -v -pers 15 20 25
 
-    ./pdpcPostProcess -i $path/"${filename}.ply" -s $path/"${filename}_seg.txt" -c $path/"${filename}_comp.txt" -o $path/"${filename}_pers"/$filename -col -v -pers 15 20 25
-
-    ./pdpcPostProcess -i $path/"${filename}.ply" -s $path/"${filename}_seg.txt" -c $path/"${filename}_comp.txt" -o $path/"${filename}_scales"/$filename -col -v -scales 5 15 20 25
-
-
+    ./pdpcPostProcess -i "${filename}.ply" -s $path/"${filename}_seg.txt" -c $path/"${filename}_comp.txt" -o $path/"${filename}_scales" -col -v -scales 5 15 20 25
+    rm $path/"${filename}_scales.txt"
+    rm $path/"${filename}_features.txt"
+    rm $path/"${filename}_seg.txt"
+    rm $path/"${filename}_comp.txt"
+    for f in $path/*.ply; do
+        python3 convert_ply.py $f
+    done
+    for f in $path/*.txt; do
+        python3 convert_txt.py $f
+    done
 }
 
 if [ "$#" -eq 1 ]; 

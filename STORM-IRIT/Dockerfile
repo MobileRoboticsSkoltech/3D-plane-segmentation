@@ -2,12 +2,8 @@ FROM ubuntu:18.04
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update
-RUN apt-get install -y cmake pkg-config  wget unzip
-#CGAL installation:
-RUN apt-get install -y libgmp-dev libmpfr-dev libboost-all-dev
 # Install Open3D system dependencies and pip
-RUN apt-get install -y libjpeg-dev zlib1g-dev
+RUN apt-get update && apt-get install -y libjpeg-dev zlib1g-dev
 RUN apt-get update && apt-get install -y \
     libgl1 \
     libgomp1 \
@@ -16,6 +12,11 @@ RUN apt-get update && apt-get install -y \
 
 # Install Open3D from the pypi repositories
 RUN python3 -m pip install --no-cache-dir --upgrade open3d
+
+#CGAL installation:
+RUN apt-get update
+RUN apt-get install -y cmake pkg-config  wget unzip
+RUN apt-get install -y libgmp-dev libmpfr-dev libboost-all-dev
 
 WORKDIR /root
 
