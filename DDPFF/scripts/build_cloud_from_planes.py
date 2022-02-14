@@ -35,7 +35,7 @@ if __name__ == '__main__':
     filename = sys.argv[1].split('.')[0]
 
     folder_path = os.path.join('output', filename)
-    if not os.path.exists(folder_path):
+    if os.path.exists(folder_path):
         rmtree(folder_path)
     os.mkdir(folder_path)
 
