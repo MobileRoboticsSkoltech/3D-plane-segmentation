@@ -3,17 +3,6 @@ import os
 import numpy as np
 import open3d as o3d
 from shutil import rmtree
-
-def clean_dir(dir_path):
-    for file_name in os.listdir(dir_path):
-        file_path = os.path.join(dir_path, file_name)
-        
-        if not os.path.isdir(file_path):
-            os.remove(file_path)
-            
-        else:
-            rmtree(file_path)
-
 if __name__ == '__main__':
 
     path = 'result.ply'
@@ -47,9 +36,8 @@ if __name__ == '__main__':
 
     folder_path = os.path.join('output', filename)
     if not os.path.exists(folder_path):
-        os.mkdir(folder_path)
-    else:
-        clean_dir(folder_path)
+        rmtree(folder_path)
+    os.mkdir(folder_path)
 
     np.save(os.path.join(folder_path, "{}.npy".format(filename)), labels)
     o3d.io.write_point_cloud(os.path.join(folder_path, "{}.pcd".format(filename)), pcd)
