@@ -100,22 +100,18 @@ int main(int argc, char** argv){
 
   segmented_cloud_ptr=seg.getSegmentedPointCloud();
 
-  bool output_specified = true;
-  if (output_specified)
-  {
-    // Check output already exists. Create outputname if not given
-    std::string outputname = "output/";
-    outputname += argv[1];
 
-    size_t dot = outputname.find_last_of ('.');
-    if (dot != std::string::npos)
+  std::string outputname = argv[1];
+
+  size_t dot = outputname.find_last_of ('.');
+  if (dot != std::string::npos)
     outputname = outputname.substr (0, dot);
+  outputname = "output/" + outputname + "/" + outputname;
+  outputname+="_seg.pcd";
+  PCL_INFO ("Saving output\n");
+  bool save_binary_pcd = false;
+  pcl::io::savePCDFile (outputname, *segmented_cloud_ptr, save_binary_pcd);
 
-    outputname+="_seg.pcd";
-    PCL_INFO ("Saving output\n");
-    bool save_binary_pcd = false;
-    pcl::io::savePCDFile (outputname, *segmented_cloud_ptr, save_binary_pcd);
-  }
 
   /// -----------------------------------|  Visualization  |-----------------------------------
   bool show_visualization = (not pcl::console::find_switch (argc, argv, "--vis"));
