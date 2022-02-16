@@ -1,0 +1,10 @@
+# ninja log v5
+1	7331	1645035543077410375	CMakeFiles/RegionGrowing.dir/src/RegionGrowing.cpp.o	bd71a2298482fe9a
+0	7334	1645035543081410396	CMakeFiles/RegionGrowing.dir/main.cpp.o	917dccb58cb321e6
+7334	11069	1645035546813429375	RegionGrowing	476de7a18068fca3
+4	7590	1645035604901723906	CMakeFiles/RegionGrowing.dir/main.cpp.o	917dccb58cb321e6
+7590	11084	1645035608393741568	RegionGrowing	476de7a18068fca3
+4	6982	1645035702698873314	CMakeFiles/RegionGrowing.dir/main.cpp.o	917dccb58cb321e6
+6982	10280	1645035705994924142	RegionGrowing	476de7a18068fca3
+4	6919	1645035764191790766	CMakeFiles/RegionGrowing.dir/main.cpp.o	917dccb58cb321e6
+6919	10211	1645035767479838056	RegionGrowing	476de7a18068fca3
