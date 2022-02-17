@@ -18,7 +18,7 @@ Here `src=/pathOfInputFolder` means the path of dataset that you are going to te
 sudo docker run --rm --mount src=/home/adminlinux/peac/input,target=/app/build/input,type=bind --mount src=/home/adminlinux/peac/output,target=/app/build/output,type=bind peac:1.0 0000_s.pcd
 ```
 
-[`plane_flitter_pcd.ini`](https://github.com/tojiboyevf/point-cloud-plane-extraction/blob/peac/peac/cpp/plane_fitter_pcd.ini) file contains paramters about camera and so on and when you run docker it automatically reads this file. If you want to use another `.ini` file then after filename show it:
+[`plane_fitter_pcd.ini`](https://github.com/tojiboyevf/point-cloud-plane-extraction/blob/peac/peac/cpp/plane_fitter_pcd.ini) file contains paramters about camera and so on and when you run docker it automatically reads this file. If you want to use another `.ini` file then after filename show it:
 
 ```
 sudo docker run --rm --mount src=/pathOfInputFolder,target=/app/build/input,type=bind --mount src=/pathOfOutputFolder,target=/app/build/output,type=bind peac:1.0 filename iniFileName
