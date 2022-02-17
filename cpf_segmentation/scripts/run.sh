@@ -11,7 +11,7 @@ process(){
     fi
     mkdir output/$filename
     ./segmentation_test $base_name
-    python3 store_labels.py output/$filename/"${filename}_seg.pcd"
+    python3 store_labels.py output/$filename/"${filename}.pcd"
 }
 
 if [ "$#" -eq 1 ]; 

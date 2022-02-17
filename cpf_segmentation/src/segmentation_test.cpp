@@ -106,8 +106,7 @@ int main(int argc, char** argv){
   size_t dot = outputname.find_last_of ('.');
   if (dot != std::string::npos)
     outputname = outputname.substr (0, dot);
-  outputname = "output/" + outputname + "/" + outputname;
-  outputname+="_seg.pcd";
+  outputname = "output/" + outputname + "/" + outputname + ".pcd";
   PCL_INFO ("Saving output\n");
   bool save_binary_pcd = false;
   pcl::io::savePCDFile (outputname, *segmented_cloud_ptr, save_binary_pcd);
