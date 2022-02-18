@@ -16,12 +16,11 @@ ADD . /app/src
 
 WORKDIR /app/src
 
-RUN wget -qO- https://github.com/IntelRealSense/librealsense/archive/pcl-${RELISE_VERSION}.tar.gz | tar xz \
+RUN wget -qO- https://github.com/PointCloudLibrary/pcl/releases/tag/pcl-${RELISE_VERSION}.tar.gz | tar xz \
  && cd pcl-pcl-${RELISE_VERSION} \
  && mkdir build \
  && cd build \
  && cmake -DCMAKE_BUILD_TYPE=Release .. \
- && make -j2 \
  && make -j2 install \
  && cd ../
 
