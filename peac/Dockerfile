@@ -8,8 +8,6 @@ RUN apt-get update && apt-get install -y python3-pip git
 
 RUN python3 -m pip install --user git+https://github.com/DanielPollithy/pypcd.git
 
-
-
 ADD ./cpp /app/src/cpp
 
 ADD ./include /app/src/include

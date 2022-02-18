@@ -9,8 +9,9 @@ if __name__ == '__main__':
     colors_map = {}
     for n, color in enumerate(np.unique(colors)):
         colors_map[color] = n
-    mapped_colors = np.copy(colors)
-    for k, v in colors_map.items(): 
-        mapped_colors[colors==k] = v
+    for n, color in enumerate(np.unique(colors)):
+        colors[np.where(colors == color)] = n + 1
+
     filename = sys.argv[1].split('.')[0]
-    np.save(filename + ".npy", mapped_colors)
+    np.save(filename + ".npy", colors)
+    
