@@ -16,7 +16,3 @@ def convert_txt_files_to_npy_format():
 
             np.save(file_path[:-4] + ".npy", np.array(labels_array))
             os.remove(file_path)
-
-
-if __name__ == "__main__":
-    convert_txt_files_to_npy_format()

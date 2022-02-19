@@ -1,4 +1,5 @@
 FROM gcc:latest as build
+FROM python:3
 
 ARG RELISE_VERSION=1.12.1
 
@@ -11,12 +12,9 @@ RUN apt-get update && \
       libusb-1.0-0-dev \
       wget \
       cmake \
+      python3-pip \
 
-ADD . /app/src
-
-WORKDIR /app/build
-
-RUN cmake ../src && make
+ADD . /app/build
 
 RUN wget -qO- https://github.com/PointCloudLibrary/pcl/releases/tag/pcl-${RELISE_VERSION}.tar.gz | tar xz \
  && cd pcl-pcl-${RELISE_VERSION} \
@@ -26,4 +24,8 @@ RUN wget -qO- https://github.com/PointCloudLibrary/pcl/releases/tag/pcl-${RELISE
  && make -j2 install \
  && cd ../
 
-ENTRYPOINT ["bash", "run.sh"]
+RUN mkdir build && cd build && cmake .. && cmake .. && cd ..
+
+RUN pip3 install open3d
+
+ENTRYPOINT ["python", "scripts/run.py"]

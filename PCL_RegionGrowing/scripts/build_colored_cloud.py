@@ -32,7 +32,3 @@ def create_colored_cloud():
 
             pcd.colors = o3d.utility.Vector3dVector(colors)
             o3d.io.write_point_cloud(os.path.join("../output", file[:-4], file[:-4] + ".pcd"), pcd)
-
-
-if __name__ == "__main__":
-    create_colored_cloud()
