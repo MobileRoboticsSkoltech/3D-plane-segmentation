@@ -11,5 +11,5 @@
 
 class RegionGrowing {
 public:
-    std::vector<pcl::PointIndices> getClusters(pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud);
+    void getClusters(pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud, std::vector<pcl::PointIndices>& clusters);
 };

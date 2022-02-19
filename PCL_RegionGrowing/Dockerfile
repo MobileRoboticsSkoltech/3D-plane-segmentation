@@ -14,7 +14,9 @@ RUN apt-get update && \
 
 ADD . /app/src
 
-WORKDIR /app/src
+WORKDIR /app/build
+
+RUN cmake ../src && make
 
 RUN wget -qO- https://github.com/PointCloudLibrary/pcl/releases/tag/pcl-${RELISE_VERSION}.tar.gz | tar xz \
  && cd pcl-pcl-${RELISE_VERSION} \
@@ -24,4 +26,4 @@ RUN wget -qO- https://github.com/PointCloudLibrary/pcl/releases/tag/pcl-${RELISE
  && make -j2 install \
  && cd ../
 
-# it remains to run main.cpp
+ENTRYPOINT ["bash", "run.sh"]

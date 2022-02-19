@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <experimental/filesystem>
+#include <fstream>
 #include <pcl/point_types.h>
 #include <pcl/io/pcd_io.h>
 #include <pcl/search/search.h>
@@ -16,34 +18,48 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr readPointCloud(std::string pathToPCD) {
     return pointCloud;
 }
 
-void writeClustersInDataFolder(pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud, std::vector<pcl::PointIndices> clusters) {
-    pcl::PCDWriter writer;
-
-    int j = 0;
-    for (std::vector<pcl::PointIndices>::const_iterator it = clusters.begin (); it != clusters.end (); ++it) {
-        pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_cluster (new pcl::PointCloud<pcl::PointXYZ>);
-        for (const auto& idx : it->indices)
-            cloud_cluster->push_back ((*pointCloud)[idx]); //*
-        cloud_cluster->width = cloud_cluster->size ();
-        cloud_cluster->height = 1;
-        cloud_cluster->is_dense = true;
-
-        std::cout << "PointCloud representing the Cluster: " << cloud_cluster->size () << " data points." << std::endl;
-        std::stringstream ss;
-        ss << "../generatedClusters/cloud_cluster_" << j << ".pcd";
-        writer.write<pcl::PointXYZ> (ss.str (), *cloud_cluster, false); //*
-        j++;
+std::string getFileName(std::string const &s) {
+    char sep = '/';
+    size_t i = s.rfind(sep, s.length());
+    if (i != std::string::npos) {
+        return(s.substr(i+1, s.length() - i - 5));
     }
+    return("");
 }
 
-int main() {
-    std::string pathToPCD = "../data/0000_s.pcd";
-    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud = readPointCloud(pathToPCD);
+void writeClustersInDataFolder(std::string pathToPCD, pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud, std::vector<pcl::PointIndices>& clusters) {
+    std::vector<int> labels(pointCloud->size());
+    int j = 1;
 
-    RegionGrowing regionGrowing;
-    std::vector<pcl::PointIndices> clusters = regionGrowing.getClusters(cloud);
+    for (std::vector<pcl::PointIndices>::const_iterator it = clusters.begin (); it != clusters.end (); ++it) {
+        for (const auto& idx : it->indices) {
+            labels[idx] = j;
+        }
+        j++;
+    }
 
-    writeClustersInDataFolder(cloud, clusters);
+    std::string newFolderName = getFileName(pathToPCD);
+    std::experimental::filesystem::create_directories("../output/" + newFolderName);
+    ofstream file("../output/" + newFolderName + "/" + newFolderName + ".txt");
+
+    for (int label : labels) {
+        file << std::to_string(label) + "\n";
+    }
+
+    file.close();
+}
+
+int main(int argc, char** argv) {
+    for (auto const& pathToPCD : std::experimental::filesystem::directory_iterator{argv[1]})
+    {
+        pcl::PointCloud<pcl::PointXYZ>::Ptr cloud = readPointCloud(pathToPCD.path().string());
+
+        RegionGrowing regionGrowing;
+        std::vector<pcl::PointIndices> clusters;
+        regionGrowing.getClusters(cloud, clusters);
+
+        writeClustersInDataFolder(pathToPCD.path().string(), cloud, clusters);
+    }
 
     return 0;
 }

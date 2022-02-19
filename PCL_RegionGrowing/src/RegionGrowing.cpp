@@ -1,6 +1,6 @@
 #include "RegionGrowing.h"
 
-std::vector <pcl::PointIndices> RegionGrowing::getClusters(pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud) {
+void RegionGrowing::getClusters(pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud, std::vector<pcl::PointIndices>& clusters) {
     pcl::search::Search<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>);
     pcl::PointCloud <pcl::Normal>::Ptr normals(new pcl::PointCloud <pcl::Normal>);
     pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> normal_estimator;
@@ -24,8 +24,5 @@ std::vector <pcl::PointIndices> RegionGrowing::getClusters(pcl::PointCloud<pcl::
     reg.setSmoothnessThreshold(3.0 / 180.0 * M_PI);
     reg.setCurvatureThreshold(1.0);
 
-    std::vector <pcl::PointIndices> clusters;
     reg.extract(clusters);
-
-    return clusters;
 }
