@@ -1,5 +1,4 @@
 FROM gcc:latest as build
-FROM python:3
 
 ARG RELISE_VERSION=1.12.1
 
@@ -13,8 +12,12 @@ RUN apt-get update && \
       wget \
       cmake \
       python3-pip \
+      python3.8
+
+RUN pip3 install open3d
 
 ADD . /app/build
+WORKDIR /app/build
 
 RUN wget -qO- https://github.com/PointCloudLibrary/pcl/releases/tag/pcl-${RELISE_VERSION}.tar.gz | tar xz \
  && cd pcl-pcl-${RELISE_VERSION} \
@@ -22,10 +25,8 @@ RUN wget -qO- https://github.com/PointCloudLibrary/pcl/releases/tag/pcl-${RELISE
  && cd build \
  && cmake -DCMAKE_BUILD_TYPE=Release .. \
  && make -j2 install \
- && cd ../
+ && cd ..\.. /
 
-RUN mkdir build && cd build && cmake .. && cmake .. && cd ..
-
-RUN pip3 install open3d
+RUN mkdir build && cd build && cmake .. && cd ..
 
 ENTRYPOINT ["python", "scripts/run.py"]

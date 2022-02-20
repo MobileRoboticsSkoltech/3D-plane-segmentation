@@ -28,7 +28,7 @@ std::string getFileName(std::string const &s) {
 }
 
 void writeClustersInDataFolder(std::string pathToPCD, pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud, std::vector<pcl::PointIndices>& clusters) {
-    std::vector<int> labels(pointCloud->size());
+    std::vector<int> labels(pointCloud->size(), 0);
     int j = 1;
 
     for (std::vector<pcl::PointIndices>::const_iterator it = clusters.begin (); it != clusters.end (); ++it) {
@@ -39,8 +39,8 @@ void writeClustersInDataFolder(std::string pathToPCD, pcl::PointCloud<pcl::Point
     }
 
     std::string newFolderName = getFileName(pathToPCD);
-    std::experimental::filesystem::create_directories("../output/" + newFolderName);
-    ofstream file("../output/" + newFolderName + "/" + newFolderName + ".txt");
+    std::experimental::filesystem::create_directories("./output/" + newFolderName);
+    ofstream file("./output/" + newFolderName + "/" + newFolderName + ".txt");
 
     for (int label : labels) {
         file << std::to_string(label) + "\n";
