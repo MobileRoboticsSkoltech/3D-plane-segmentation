@@ -15,7 +15,6 @@ def create_colored_cloud():
         pcd = o3d.io.read_point_cloud(file_path)
         pcd.paint_uniform_color([0, 0, 0])
         set_of_colors = set()
-        dict_of_colors = {}
 
         for unique_label in unique_labels:
             col = np.random.uniform(0, 1, size=3)
@@ -24,8 +23,7 @@ def create_colored_cloud():
                 col = np.random.uniform(0, 1, size=3)
 
             set_of_colors.add(tuple(col))
-            dict_of_colors[unique_label] = tuple(col)
-            colors[labels == unique_label] = tuple(col)
+            colors[labels == unique_label] = col
 
         pcd.colors = o3d.utility.Vector3dVector(colors)
         o3d.io.write_point_cloud(
