@@ -24,7 +24,7 @@ RUN pip3 install open3d
 ADD . /app/build
 WORKDIR /app/build
 
-RUN wget -qO- wget -qO- https://github.com/PointCloudLibrary/pcl/archive/refs/tags/pcl-${RELISE_VERSION}.tar.gz | tar xz \
+RUN wget -qO- https://github.com/PointCloudLibrary/pcl/archive/refs/tags/pcl-${RELISE_VERSION}.tar.gz | tar xz \
  && cd pcl-pcl-${RELISE_VERSION} \
  && mkdir build \
  && cd build \
