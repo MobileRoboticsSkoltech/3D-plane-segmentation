@@ -9,7 +9,6 @@
 #include <pcl/segmentation/euclidean_cluster_comparator.h>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
-#include <pcl/io/openni_grabber.h>
 #include <pcl/io/pcd_grabber.h>
 #include <pcl/features/normal_3d.h>
 #include <pcl/common/transforms.h>
