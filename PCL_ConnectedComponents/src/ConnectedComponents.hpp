@@ -1,4 +1,5 @@
 #include <iostream>
+#include <memory>
 #include <pcl/point_types.h>
 #include <pcl/io/pcd_io.h>
 #include <pcl/search/search.h>
@@ -22,24 +23,18 @@ class ConnectedComponents {
 public:
     typedef pcl::PointCloud<PointT> Cloud;
     typedef typename Cloud::ConstPtr CloudConstPtr;
-    typedef typename Cloud::Ptr CloudPtr;
-    CloudConstPtr cloud_;
+    CloudConstPtr cloud;
     pcl::IntegralImageNormalEstimation<PointT, pcl::Normal> ne_;
     pcl::OrganizedMultiPlaneSegmentation<PointT, pcl::Normal, pcl::Label> mps_;
 
-    ConnectedComponents(CloudConstPtr cloud) : cloud_(cloud)
+    ConnectedComponents(CloudConstPtr cloud) : cloud(cloud)
     {
     }
-    typename pcl::PointCloud<PointT>::CloudVectorType SegmentCloud();
+    std::vector<pcl::PointIndices> SegmentCloud(std::vector<pcl::PointIndices>& clusters);
 };
 
 template<typename PointT>
-typename pcl::PointCloud<PointT>::CloudVectorType ConnectedComponents<PointT>::SegmentCloud() {
-    CloudPtr cloud (new Cloud ());
-    {
-        *cloud = *cloud_;
-    }
-
+std::vector<pcl::PointIndices> ConnectedComponents<PointT>::SegmentCloud(std::vector<pcl::PointIndices>& clusters) {
     unsigned char red [6] = {255,   0,   0, 255, 255,   0};
     unsigned char grn [6] = {  0, 255,   0, 255,   0, 255};
     unsigned char blu [6] = {  0,   0, 255,   0, 255, 255};
@@ -59,21 +54,18 @@ typename pcl::PointCloud<PointT>::CloudVectorType ConnectedComponents<PointT>::S
     mps_.setInputCloud(cloud);
     mps_.segmentAndRefine(regions, model_coefficients, inlier_indices, labels, label_indices, boundary_indices);
 
-    typename pcl::PointCloud<PointT>::CloudVectorType clusters;
-
     if (regions.size () > 0) {
-        std::vector<bool> plane_labels;
-        plane_labels.resize(label_indices.size(), false);
+        std::shared_ptr<std::set<std::uint32_t>> plane_labels(new std::set<uint32_t>);
         for (size_t i = 0; i < label_indices.size(); i++) {
             if (label_indices[i].indices.size() > 10000) {
-                plane_labels[i] = true;
+                plane_labels->insert(i);
             }
         }
         typename pcl::EuclideanClusterComparator<PointT, pcl::Label>::Ptr euclidean_cluster_comparator_(
                 new typename pcl::EuclideanClusterComparator<PointT, pcl::Label>());
         euclidean_cluster_comparator_->setInputCloud(cloud);
         euclidean_cluster_comparator_->setLabels(labels);
-        // euclidean_cluster_comparator_->setExcludeLabels(plane_labels);
+        euclidean_cluster_comparator_->setExcludeLabels(plane_labels);
         euclidean_cluster_comparator_->setDistanceThreshold(0.01f, false);
 
         pcl::PointCloud<pcl::Label> euclidean_labels;
@@ -85,18 +77,7 @@ typename pcl::PointCloud<PointT>::CloudVectorType ConnectedComponents<PointT>::S
 
         for (size_t i = 0; i < euclidean_label_indices.size(); i++) {
             if (euclidean_label_indices[i].indices.size() > 1000) {
-                pcl::PointCloud<PointT> cluster;
-                pcl::copyPointCloud(*cloud, euclidean_label_indices[i].indices, cluster);
-                clusters.push_back(cluster);
-                pcl::PointCloud<pcl::PointXYZRGB> color_cluster;
-                pcl::copyPointCloud(cluster, color_cluster);
-                for (size_t j = 0; j < color_cluster.size(); j++) {
-                    color_cluster.points[j].r = (color_cluster.points[j].r + red[i % 6]) / 2;
-                    color_cluster.points[j].g = (color_cluster.points[j].g + grn[i % 6]) / 2;
-                    color_cluster.points[j].b = (color_cluster.points[j].b + blu[i % 6]) / 2;
-                }
-                aggregate_cloud += color_cluster;
-
+                clusters.push_back(euclidean_label_indices[i]);
             }
         }
     }
