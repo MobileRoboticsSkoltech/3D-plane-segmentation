@@ -37,8 +37,8 @@ void writeClustersInDataFolder(std::string pathToPCD, pcl::PointCloud<pcl::Point
     }
 
     std::string newFolderName = getFileName(pathToPCD);
-    std::experimental::filesystem::create_directories("../output/" + newFolderName);
-    ofstream file("../output/" + newFolderName + "/" + newFolderName + ".txt");
+    std::experimental::filesystem::create_directories("./output/" + newFolderName);
+    ofstream file("./output/" + newFolderName + "/" + newFolderName + ".txt");
 
     for (int label : labels) {
         file << std::to_string(label) + "\n";
