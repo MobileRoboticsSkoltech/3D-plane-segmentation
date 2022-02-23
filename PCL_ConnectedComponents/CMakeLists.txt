@@ -10,6 +10,6 @@ add_definitions(${PCL_DEFINITIONS})
 
 link_libraries(stdc++fs)
 
-add_executable(ConnectedComponents main.cpp src/ConnectedComponents.hpp)
+add_executable(ConnectedComponents main.cpp src/ConnectedComponents.h src/ConnectedComponents.cpp)
 
 target_link_libraries(ConnectedComponents ${PCL_LIBRARIES})

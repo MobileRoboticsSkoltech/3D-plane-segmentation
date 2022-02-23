@@ -3,9 +3,8 @@
 #include <pcl/io/pcd_io.h>
 #include <pcl/visualization/cloud_viewer.h>
 #include <pcl/segmentation/organized_connected_component_segmentation.h>
-#include "src/ConnectedComponents.hpp"
+#include "src/ConnectedComponents.h"
 #include <experimental/filesystem>
-#include <fstream>
 
 pcl::PointCloud<pcl::PointXYZRGBA>::Ptr readPointCloud(std::string pathToRGB) {
     pcl::PointCloud<pcl::PointXYZRGBA>::Ptr pointCloud (new pcl::PointCloud<pcl::PointXYZRGBA>);
@@ -38,8 +37,8 @@ void writeClustersInDataFolder(std::string pathToPCD, pcl::PointCloud<pcl::Point
     }
 
     std::string newFolderName = getFileName(pathToPCD);
-    std::experimental::filesystem::create_directories("./output/" + newFolderName);
-    ofstream file("./output/" + newFolderName + "/" + newFolderName + ".txt");
+    std::experimental::filesystem::create_directories("../output/" + newFolderName);
+    ofstream file("../output/" + newFolderName + "/" + newFolderName + ".txt");
 
     for (int label : labels) {
         file << std::to_string(label) + "\n";
@@ -51,7 +50,7 @@ void writeClustersInDataFolder(std::string pathToPCD, pcl::PointCloud<pcl::Point
 int main(int argc, char** argv) {
     for (auto const& pathToRGB : std::experimental::filesystem::directory_iterator{argv[1]}) {
         pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud = readPointCloud(pathToRGB.path().string());
-        ConnectedComponents<pcl::PointXYZRGBA> connectedComponentsAlgorithm(cloud);
+        ConnectedComponents connectedComponentsAlgorithm(cloud);
         std::vector<pcl::PointIndices> clusters;
         connectedComponentsAlgorithm.SegmentCloud(clusters);
 
