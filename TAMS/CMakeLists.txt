@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(RegionGrowing)
+project(TAMS)
 
 set(CMAKE_CXX_STANDARD 14)
 
@@ -16,6 +16,6 @@ link_libraries(stdc++fs)
 set(HEADER_FILES src/headers/common.h src/headers/planar_patch.h src/headers/rgb.h src/headers/subwindow.h src/headers/subwindow_region_growing.h src/headers/subwindow_region_growing_parameters.h)
 set(SOURCE_FILES src/subwindow_region_growing.cc src/common.cc)
 
-add_executable(RegionGrowing main.cpp ${SOURCE_FILES} ${HEADER_FILES})
+add_executable(TAMS main.cpp ${SOURCE_FILES} ${HEADER_FILES})
 
-target_link_libraries(RegionGrowing ${PCL_LIBRARIES})
+target_link_libraries(TAMS ${PCL_LIBRARIES})

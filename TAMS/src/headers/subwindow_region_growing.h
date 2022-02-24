@@ -91,7 +91,7 @@ class SubwindowRGSegmentation
   investigate8Neighbors (const int pos);
 
   /** \brief Segment the input cloud into big planar patches.*/
-  void
+  std::vector<std::vector<int>>
   applySegmentation();
 
   /** \brief Set random color to the detected big planar patches.

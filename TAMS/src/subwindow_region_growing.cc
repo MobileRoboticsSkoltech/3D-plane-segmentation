@@ -3,7 +3,7 @@
 
 using namespace tams;
 
-void
+std::vector<std::vector<int>>
 SubwindowRGSegmentation::applySegmentation()
 {
   width_ = cloud_->width;
@@ -41,6 +41,8 @@ SubwindowRGSegmentation::applySegmentation()
   Vector3d eigenvalues = Vector3d::Zero();
   Matrix3d eigenvectors = Matrix3d::Zero();
 
+  std::vector<std::vector<int>> indices;
+
   int index = 0;
   int pos = 0;
   while (index < planar_subwindows_cnt_)
@@ -53,6 +55,7 @@ SubwindowRGSegmentation::applySegmentation()
       break;
     memset (visited_, false, subwindows_.size() * sizeof (bool));
     PlanarSegment tmp_pp;
+    std::vector<int> tempIndices;
     neighbors_.clear();
     pos = sorted_subwindows_[index].index;
     tmp_pp.sum = subwindows_[pos].sum;
@@ -123,10 +126,12 @@ SubwindowRGSegmentation::applySegmentation()
       for (int i = tmp_pp.point_num, *p = valid_indices_ + pos * subwindow_size; i < point_num; i++, p++)
       {
         tmp_pp.points[i] = *p;
+        tempIndices.push_back(*p);
       }
       tmp_pp.point_num = point_num;
       added_to_region_[pos] = true;
       investigate8Neighbors(pos);
+      indices.push_back(tempIndices);
     }
     tmp_pp.points.erase(tmp_pp.points.begin() + tmp_pp.point_num, tmp_pp.points.end());
     if (tmp_pp.point_num > parameters_.min_segment_size)
@@ -147,6 +152,8 @@ SubwindowRGSegmentation::applySegmentation()
   delete [] isPlanar_;
   delete [] valid_indices_;
   //PCL_INFO ("%d segments have been detected.\n", planar_patches_.size());
+
+  return indices;
 }
 
 void
