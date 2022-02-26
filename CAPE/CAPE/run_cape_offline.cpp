@@ -14,6 +14,13 @@
 #include <dirent.h>
 #include <boost/algorithm/string.hpp>
 
+#include <pcl/point_types.h>
+#include <pcl/io/ascii_io.h>
+#include <pcl/io/pcd_io.h>
+#include <pcl/point_cloud.h>
+#include <pcl/common/transforms.h>
+
+
 using namespace std;
 
 bool done = false;
@@ -102,81 +109,83 @@ int main(int argc, char ** argv){
 
     bool show_visualization = false;
     stringstream string_buff;
+    std::string pcd_filename = argv[1];
+    const std::string fname =  pcd_filename;
 
-    int PATCH_SIZE;
-    if (argc>2){
-        PATCH_SIZE = atoi(argv[1]);
-        string_buff << "input/" << argv[2];
-    }else {
-        PATCH_SIZE = 16;
-        string_buff << "input";
-    }
-    for (int i = 1; i < argc; ++i) {
-        if (std::string(argv[i]) == "--vis") {
-            show_visualization = true;
-        } 
-    }
-    // Get intrinsics
-    cv::Mat K_rgb, K_ir, dist_coeffs_rgb, dist_coeffs_ir, R_stereo, t_stereo;
-    stringstream calib_path;
-    calib_path<<string_buff.str()<<"/calib_params.xml";
-    loadCalibParameters(calib_path.str(), K_rgb, dist_coeffs_rgb, K_ir, dist_coeffs_ir, R_stereo, t_stereo);
-    float fx_ir = K_ir.at<double>(0,0); float fy_ir = K_ir.at<double>(1,1);
-    float cx_ir = K_ir.at<double>(0,2); float cy_ir = K_ir.at<double>(1,2);
-    float fx_rgb = K_rgb.at<double>(0,0); float fy_rgb = K_rgb.at<double>(1,1);
-    float cx_rgb = K_rgb.at<double>(0,2); float cy_rgb = K_rgb.at<double>(1,2);
+    int PATCH_SIZE=16;
+    // if (argc>2){
+    //     PATCH_SIZE = atoi(argv[1]);
+    //     string_buff << "input/" << argv[2];
+    // }else {
+    //     PATCH_SIZE = 16;
+    //     string_buff << "input";
+    // }
+    // for (int i = 1; i < argc; ++i) {
+    //     if (std::string(argv[i]) == "--vis") {
+    //         show_visualization = true;
+    //     } 
+    // }
+    // // Get intrinsics
+    // cv::Mat K_rgb, K_ir, dist_coeffs_rgb, dist_coeffs_ir, R_stereo, t_stereo;
+    // stringstream calib_path;
+    // calib_path<<string_buff.str()<<"/calib_params.xml";
+    // loadCalibParameters(calib_path.str(), K_rgb, dist_coeffs_rgb, K_ir, dist_coeffs_ir, R_stereo, t_stereo);
+    // float fx_ir = K_ir.at<double>(0,0); float fy_ir = K_ir.at<double>(1,1);
+    // float cx_ir = K_ir.at<double>(0,2); float cy_ir = K_ir.at<double>(1,2);
+    // float fx_rgb = K_rgb.at<double>(0,0); float fy_rgb = K_rgb.at<double>(1,1);
+    // float cx_rgb = K_rgb.at<double>(0,2); float cy_rgb = K_rgb.at<double>(1,2);
 
-    // Read frame 1 to allocate and get dimension
-    cv::Mat d_img;
-    int width, height;
-    stringstream image_path;
-    stringstream depth_img_path;
+    // // Read frame 1 to allocate and get dimension
+    // cv::Mat d_img;
+    // int width, height;
+    // stringstream image_path;
+    // stringstream depth_img_path;
     stringstream save_path;
 
-    depth_img_path<<string_buff.str()<<"/depth_0.png";
+    // depth_img_path<<string_buff.str()<<"/depth_0.png";
 
-    d_img = cv::imread(depth_img_path.str(),cv::IMREAD_ANYDEPTH);
+    // d_img = cv::imread(depth_img_path.str(),cv::IMREAD_ANYDEPTH);
 
-    if(d_img.data){
-        width = d_img.cols;
-        height = d_img.rows;
-    }else{
-        cout<<"Error loading file";
-        return -1;
-    }
+    // if(d_img.data){
+    //     width = d_img.cols;
+    //     height = d_img.rows;
+    // }else{
+    //     cout<<"Error loading file";
+    //     return -1;
+    // }
 
-    int nr_horizontal_cells = width/PATCH_SIZE;
-    int nr_vertical_cells = height/PATCH_SIZE;
+    // int nr_horizontal_cells = width/PATCH_SIZE;
+    // int nr_vertical_cells = height/PATCH_SIZE;
 
-    // Pre-computations for backprojection
-    cv::Mat_<float> X_pre(height,width);
-    cv::Mat_<float> Y_pre(height,width);
-    cv::Mat_<float> U(height,width);
-    cv::Mat_<float> V(height,width);
-    for (int r=0;r<height; r++){
-        for (int c=0;c<width; c++){
-            // Not efficient but at this stage doesn t matter
-            X_pre.at<float>(r,c) = (c-cx_ir)/fx_ir; Y_pre.at<float>(r,c) = (r-cy_ir)/fy_ir;
-        }
-    }
+    // // Pre-computations for backprojection
+    // cv::Mat_<float> X_pre(height,width);
+    // cv::Mat_<float> Y_pre(height,width);
+    // cv::Mat_<float> U(height,width);
+    // cv::Mat_<float> V(height,width);
+    // for (int r=0;r<height; r++){
+    //     for (int c=0;c<width; c++){
+    //         // Not efficient but at this stage doesn t matter
+    //         X_pre.at<float>(r,c) = (c-cx_ir)/fx_ir; Y_pre.at<float>(r,c) = (r-cy_ir)/fy_ir;
+    //     }
+    // }
 
-    // Pre-computations for maping an image point cloud to a cache-friendly array where cell's local point clouds are contiguous
-    cv::Mat_<int> cell_map(height,width);
+    // // Pre-computations for maping an image point cloud to a cache-friendly array where cell's local point clouds are contiguous
+    // cv::Mat_<int> cell_map(height,width);
 
-    for (int r=0;r<height; r++){
-        int cell_r = r/PATCH_SIZE;
-        int local_r = r%PATCH_SIZE;
-        for (int c=0;c<width; c++){
-            int cell_c = c/PATCH_SIZE;
-            int local_c = c%PATCH_SIZE;
-            cell_map.at<int>(r,c) = (cell_r*nr_horizontal_cells+cell_c)*PATCH_SIZE*PATCH_SIZE + local_r*PATCH_SIZE + local_c;
-        }
-    }
+    // for (int r=0;r<height; r++){
+    //     int cell_r = r/PATCH_SIZE;
+    //     int local_r = r%PATCH_SIZE;
+    //     for (int c=0;c<width; c++){
+    //         int cell_c = c/PATCH_SIZE;
+    //         int local_c = c%PATCH_SIZE;
+    //         cell_map.at<int>(r,c) = (cell_r*nr_horizontal_cells+cell_c)*PATCH_SIZE*PATCH_SIZE + local_r*PATCH_SIZE + local_c;
+    //     }
+    // }
 
-    cv::Mat_<float> X(height,width);
-    cv::Mat_<float> Y(height,width);
-    Eigen::MatrixXf cloud_array(width*height,3);
-    Eigen::MatrixXf cloud_array_organized(width*height,3);
+    // cv::Mat_<float> X(height,width);
+    // cv::Mat_<float> Y(height,width);
+    // Eigen::MatrixXf cloud_array(width*height,3);
+    // Eigen::MatrixXf cloud_array_organized(width*height,3);
     // Populate with random color codes
     for(int i=0; i<100;i++){
         cv::Vec3b color;
@@ -196,40 +205,69 @@ int main(int argc, char ** argv){
     color_code[52][0] = 0; color_code[52][1] = 255; color_code[52][2] = 51;
     color_code[53][0] = 153; color_code[53][1] = 0; color_code[53][2] = 255;
 
-    int frame_num = 0;
-    DIR *dir;
-    struct dirent *ent;
-    if ((dir = opendir (string_buff.str().c_str())) != NULL) {
-        while ((ent = readdir (dir)) != NULL) {
-            if(boost::algorithm::contains(ent->d_name, ".png")) frame_num++;
+    // int frame_num = 0;
+    // DIR *dir;
+    // struct dirent *ent;
+    // if ((dir = opendir (string_buff.str().c_str())) != NULL) {
+    //     while ((ent = readdir (dir)) != NULL) {
+    //         if(boost::algorithm::contains(ent->d_name, ".png")) frame_num++;
+    //     }
+    //     closedir (dir);
+    // } else {
+    //     perror ("could not open directory");
+    //     return EXIT_FAILURE;
+    // }
+
+    pcl::PointCloud<pcl::PointXYZ> cloud;
+	if (pcl::io::loadPCDFile<pcl::PointXYZ>(fname, cloud)){
+		PCL_ERROR ("ERROR: Could not read input point cloud %s.\n", string_buff.str().c_str ());
+		return 3;
+	} else {
+        int height = cloud.height;
+        int width = cloud.width;
+        Eigen::MatrixXf cloud_array = cloud.getMatrixXfMap(3, 4, 0);
+        Eigen::MatrixXf cloud_array_organized(width*height,3);
+        cout << cloud.at(0, 0) << " " << cloud_array(0, 0) <<" "<< cloud_array(1, 0) <<" "<< cloud_array(2, 0) <<" "<< cloud_array(3, 0)  << endl;
+        cout << cloud.at(639, 0) << " " << cloud_array(0, 639) <<" "<< cloud_array(1, 639) <<" "<< cloud_array(2, 639) << " "<<cloud_array(3, 639) << endl;
+        cout << cloud.at(641, 0) << " " << cloud_array(0, 641) <<" "<< cloud_array(1, 641) <<" "<< cloud_array(2, 641) <<" "<< cloud_array(3, 641)  << endl;
+
+        int nr_horizontal_cells = width/PATCH_SIZE;
+        int nr_vertical_cells = height/PATCH_SIZE;
+        // Pre-computations for maping an image point cloud to a cache-friendly array where cell's local point clouds are contiguous
+        cv::Mat_<int> cell_map(height,width);
+        for (int r=0;r<height; r++){
+            int cell_r = r/PATCH_SIZE;
+            int local_r = r%PATCH_SIZE;
+            for (int c=0;c<width; c++){
+                int cell_c = c/PATCH_SIZE;
+                int local_c = c%PATCH_SIZE;
+                cell_map.at<int>(r,c) = (cell_r*nr_horizontal_cells+cell_c)*PATCH_SIZE*PATCH_SIZE + local_r*PATCH_SIZE + local_c;
+            }
         }
-        closedir (dir);
-    } else {
-        perror ("could not open directory");
-        return EXIT_FAILURE;
-    }
+        
+    // int i = 0;
+    // while(i < frame_num){
+
+    //     // Read frame i
+    //     cout<<"Frame: "<<i<<endl;
+
+    //     // Read depth image
+    //     depth_img_path.str("");
+    //     depth_img_path<<string_buff.str()<<"/depth_"<<i<<".png";
+
+    //     d_img = cv::imread(depth_img_path.str(), cv::IMREAD_ANYDEPTH);
+    //     d_img.convertTo(d_img, CV_32F);
+
+    //     // Backproject to point cloud
+    //     X = X_pre.mul(d_img); Y = Y_pre.mul(d_img);
+
 
     // Initialize CAPE
     plane_detector = new CAPE(height, width, PATCH_SIZE, PATCH_SIZE, cylinder_detection, COS_ANGLE_MAX, MAX_MERGE_DIST);
 
-    int i = 0;
-    while(i < frame_num){
+        cloud_array_organized.setZero();
 
-        // Read frame i
-        cout<<"Frame: "<<i<<endl;
-
-        // Read depth image
-        depth_img_path.str("");
-        depth_img_path<<string_buff.str()<<"/depth_"<<i<<".png";
-
-        d_img = cv::imread(depth_img_path.str(), cv::IMREAD_ANYDEPTH);
-        d_img.convertTo(d_img, CV_32F);
-
-        // Backproject to point cloud
-        X = X_pre.mul(d_img); Y = Y_pre.mul(d_img);
-        cloud_array.setZero();
-
-        projectPointCloud(X, Y, d_img, U, V, fx_rgb, fy_rgb, cx_rgb, cy_rgb, t_stereo.at<double>(2), cloud_array);
+        // projectPointCloud(X, Y, d_img, U, V, fx_rgb, fy_rgb, cx_rgb, cy_rgb, t_stereo.at<double>(2), cloud_array);
 
         cv::Mat_<cv::Vec3b> seg_rz = cv::Mat_<cv::Vec3b>(height,width,cv::Vec3b(0,0,0));
         cv::Mat_<uchar> seg_output = cv::Mat_<uchar>(height,width,uchar(0));
@@ -240,12 +278,14 @@ int main(int argc, char ** argv){
         vector<CylinderSeg> cylinder_params;
         double t1 = cv::getTickCount();
         organizePointCloudByCell(cloud_array, cloud_array_organized, cell_map);
+
         plane_detector->process(cloud_array_organized, nr_planes, nr_cylinders, seg_output, plane_params, cylinder_params);
+
         double t2 = cv::getTickCount();
         double time_elapsed = (t2-t1)/(double)cv::getTickFrequency();
         cout<<"Total time elapsed: "<<time_elapsed<<endl;
 
-        /* Uncomment this block to print model params
+        // Uncomment this block to print model params
         for(int p_id=0; p_id<nr_planes;p_id++){
             cout<<"[Plane #"<<p_id<<"] with ";
             cout<<"normal: ("<<plane_params[p_id].normal[0]<<" "<<plane_params[p_id].normal[1]<<" "<<plane_params[p_id].normal[2]<<"), ";
@@ -258,12 +298,11 @@ int main(int argc, char ** argv){
             cout<<"center: ("<<cylinder_params[c_id].centers[0].transpose()<<"), ";
             cout<<"radius: "<<cylinder_params[c_id].radii[0]<<endl;
         }
-        */
 
         // Map segments with color codes and overlap segmented image w/ RGB
         uchar * sCode;
         uchar * dColor;
-       
+
         int code;
         for(int r=0; r<  height; r++){
             dColor = seg_rz.ptr<uchar>(r);
@@ -279,7 +318,6 @@ int main(int argc, char ** argv){
                 sCode++; 
             }
         }
-
         // Show frame rate and labels
         cv::rectangle(seg_rz,  cv::Point(0,0),cv::Point(width,20), cv::Scalar(0,0,0),-1);
         std::stringstream fps;
@@ -298,7 +336,7 @@ int main(int argc, char ** argv){
         }
 
         save_path.str("");
-        save_path << "output/segment_" << i << ".png";
+        save_path << "segment_"<< ".png";
         cv::imwrite(save_path.str(), seg_rz);
         if (show_visualization) {
             cv::namedWindow("Seg");
@@ -306,7 +344,7 @@ int main(int argc, char ** argv){
             cv::waitKey(1);
         }   
             
-        i++;
+        // i++;
     }
     return 0;
 }
