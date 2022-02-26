@@ -33,7 +33,6 @@ void writeClustersInDataFolder(std::string pathToPCD, pcl::PointCloud<pcl::Point
 
     for (std::vector<int> cluster : clusters) {
         for (const auto& idx : cluster) {
-            cout << cluster.size();
             labels[idx] = j;
         }
         j++;
@@ -63,11 +62,11 @@ int main(int argc, char** argv) {
         parameters.subwindow_side_length = 3;
 
         tams::SubwindowRGSegmentation segmentation;
-        segmentation.setparameters (parameters);
-        segmentation.setInput (cloud);
+        segmentation.setparameters(parameters);
+        segmentation.setInput(cloud);
         segmentation.preprocessing();
         std::vector<std::vector<int>> indices = segmentation.applySegmentation();
-        cout << indices.size();
+        writeClustersInDataFolder(pathToPCD.path().string(), cloud, indices);
     }
     return 0;
 }
