@@ -3,7 +3,6 @@ import os
 import numpy as np
 import open3d as o3d
 from shutil import rmtree
-
 if __name__ == '__main__':
 
     path = 'result.ply'
