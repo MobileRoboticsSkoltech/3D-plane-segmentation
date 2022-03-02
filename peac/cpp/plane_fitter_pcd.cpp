@@ -194,11 +194,6 @@ void processOneFrame(pcl::PointCloud<pcl::PointXYZ>& cloud, const std::string& o
 	double process_ms=timer.toc();
 	std::cout<<process_ms<<" ms"<<std::endl;
 
-	//save seg image
-	cv::cvtColor(seg,seg,CV_RGB2BGR);
-	cv::imwrite(outputFilePrefix+".seg.png", seg);
-	std::cout<<"output: "<<outputFilePrefix<<".seg.png"<<std::endl;
-
 	//save seg cloud
 	CloudXYZRGB xyzrgb(cloud.width, cloud.height);
 	for(int r=0; r<(int)xyzrgb.height; ++r) {
@@ -214,7 +209,7 @@ void processOneFrame(pcl::PointCloud<pcl::PointXYZ>& cloud, const std::string& o
 			pix.b=prgb(0);
 		}
 	}
-	pcl::io::savePCDFileBinary(outputFilePrefix+".seg.pcd", xyzrgb);
+	pcl::io::savePCDFileBinary(outputFilePrefix+".pcd", xyzrgb);
 	
 	if(global::showWindow) {
 		//show frame rate
@@ -299,7 +294,7 @@ int process(std::string pcd_filename) {
 			(float)unitScaleFactor)));
 		std::cout<<fname<<std::endl;
 
-		std::string outputFilePrefix = outputDir + "/" + global::getNameNoExtension(fname);
+		std::string outputFilePrefix = outputDir + "/" + global::getNameNoExtension(fname)+ "/" + global::getNameNoExtension(fname);
 		processOneFrame(cloud, outputFilePrefix);
 	}
 
