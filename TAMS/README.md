@@ -16,3 +16,6 @@ cd build
 cmake -DCMAKE_BUILD_TYPE=Release ..
 make -j2 install
 ```
+
+## Source of TAMS library:
+[TAMS](https://github.com/junhaoxiao/TAMS-Planar-Surface-Based-Perception)

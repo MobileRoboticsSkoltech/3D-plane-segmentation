@@ -2,6 +2,8 @@ FROM ubuntu:latest
 
 ARG RELISE_VERSION=1.12.1
 
+MAINTAINER pavelmokeev
+
 RUN apt-get update && \
     apt-get install -y \
       gcc \
@@ -18,11 +20,7 @@ RUN apt-get update && \
       python3-pip \
       libglu1-mesa-dev freeglut3-dev mesa-common-dev
 
-
-RUN pip3 install open3d
-
-ADD . /app/build
-WORKDIR /app/build
+WORKDIR /src/build
 
 RUN wget -qO- https://github.com/PointCloudLibrary/pcl/archive/refs/tags/pcl-${RELISE_VERSION}.tar.gz | tar xz \
  && cd pcl-pcl-${RELISE_VERSION} \
@@ -30,8 +28,3 @@ RUN wget -qO- https://github.com/PointCloudLibrary/pcl/archive/refs/tags/pcl-${R
  && cd build \
  && cmake -DCMAKE_BUILD_TYPE=Release .. \
  && make -j2 install \
- && cd ../.. /
-
-RUN mkdir build && cd build && cmake .. && cmake --build . && cd ..
-
-ENTRYPOINT ["python3", "scripts/run.py"]
