@@ -28,4 +28,3 @@ RUN wget -qO- https://github.com/PointCloudLibrary/pcl/archive/refs/tags/pcl-${R
  && cd build \
  && cmake -DCMAKE_BUILD_TYPE=Release .. \
  && make -j2 install \
- && cd ../.. /
