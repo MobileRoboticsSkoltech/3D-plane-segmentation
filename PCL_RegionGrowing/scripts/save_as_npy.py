@@ -7,6 +7,8 @@ def convert_txt_files_to_npy_format():
 
     for subdir, _, files in os.walk(rootdir):
         for file in files:
+            if "ex_time" in file:
+                continue
             file_path = os.path.join(subdir, file)
             labels_array = np.loadtxt(file_path).astype(int)
 

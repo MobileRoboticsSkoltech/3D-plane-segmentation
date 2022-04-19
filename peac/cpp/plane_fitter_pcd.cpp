@@ -194,6 +194,12 @@ void processOneFrame(pcl::PointCloud<pcl::PointXYZ>& cloud, const std::string& o
 	double process_ms=timer.toc();
 	std::cout<<process_ms<<" ms"<<std::endl;
 
+	std::ofstream ex_time;
+	// std::cout << getFileName(argv[1]) << std::endl;
+	ex_time.open ("./output/" + global::getNameNoExtension(outputFilePrefix) + "/" +"ex_time.txt");
+	ex_time << "Elapsed(ms)=" << process_ms<< std::endl;
+	ex_time.close();
+
 	//save seg cloud
 	CloudXYZRGB xyzrgb(cloud.width, cloud.height);
 	for(int r=0; r<(int)xyzrgb.height; ++r) {
@@ -301,10 +307,22 @@ int process(std::string pcd_filename) {
 	return 0;
 }
 
+// std::string getFileName(std::string const &s) {
+    
+//     return(s.substr(0, s.length() - 4));
+    
+// }
+
 int main(const int argc, const char** argv) {
 	if(argc==2)
 		global::iniLoad("/app/src/cpp/plane_fitter_pcd.ini");
 	else if(argc==3)
 		global::iniLoad(argv[2]); 
-	return process(argv[1]);
+
+	// clock_t start = clock();
+	int ret_code = process(argv[1]);
+	// clock_t stop = clock();
+
+	
+	return ret_code;
 }

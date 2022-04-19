@@ -27,6 +27,7 @@
 
 #include <PDPC/Common/Colors.h>
 #include <PDPC/Common/String.h>
+#include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel  K;
 typedef K::FT                                                FT;
@@ -64,10 +65,11 @@ int main(int argc, char **argv)
     const bool in_v = opt.get_bool("verbose", "v").set_default(false).set_brief("Add verbose messages");
 
     const bool in_debug = opt.get_bool("debug").set_default(false).set_brief("Save before/after segmentations as colored ply");
-
     bool ok = opt.ok();
     if(!ok) return 1;
 
+    std::ofstream ex_time;
+    ex_time.open ("./output/" + in_output + "/" +"ex_time.txt", std::ios_base::app);
     PointCloud points;
     ok = Loader::Load(in_input, points, in_v);
     if(!ok) return 1;
@@ -93,6 +95,7 @@ int main(int argc, char **argv)
     }
 
     if(in_debug) points.request_colors();
+    clock_t start = clock();
 
     // 1. Segmentations --------------------------------------------------------
     info().iff(in_v) << "Performing " << scale_count << " planar region growing";
@@ -378,6 +381,10 @@ int main(int argc, char **argv)
     }
 
     ComponentDataSet comp_data(comp_set, std::move(reg_set));
+
+    clock_t stop = clock();
+    ex_time << "Elapsed(m1)=" << (double)(stop - start)/(CLOCKS_PER_SEC/1000) << std::endl;
+    ex_time.close();
     comp_data.save(in_output + "_comp.txt");
 
     comp_seg.save(in_output + "_seg.txt");

@@ -25,5 +25,5 @@ private:
 
 public:
     ConnectedComponents(pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr cloud);
-    void SegmentCloud(std::vector<pcl::PointIndices>& clusters);
+    double SegmentCloud(std::vector<pcl::PointIndices>& clusters);
 };

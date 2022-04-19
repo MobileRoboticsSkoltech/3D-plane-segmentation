@@ -1,4 +1,5 @@
 #include <iostream>
+#include <time.h>
 #include <vector>
 #include <experimental/filesystem>
 #include <pcl/point_types.h>
@@ -64,9 +65,17 @@ int main(int argc, char** argv) {
         tams::SubwindowRGSegmentation segmentation;
         segmentation.setparameters(parameters);
         segmentation.setInput(cloud);
+
+        clock_t start = clock();
         segmentation.preprocessing();
         std::vector<std::vector<int>> indices = segmentation.applySegmentation();
+        clock_t stop = clock();
+        std::ofstream ex_time;
+        std::cout << pathToPCD.path().string() << std::endl;
         writeClustersInDataFolder(pathToPCD.path().string(), cloud, indices);
+        ex_time.open ("./output/" + getFileName(pathToPCD.path().string()) + "/" +"ex_time.txt");
+        ex_time << "Elapsed(ms)=" << (double)(stop - start)/(CLOCKS_PER_SEC/1000) << std::endl;
+        ex_time.close();
     }
     return 0;
 }

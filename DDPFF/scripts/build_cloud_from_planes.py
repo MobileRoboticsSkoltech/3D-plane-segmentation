@@ -40,4 +40,5 @@ if __name__ == '__main__':
     os.mkdir(folder_path)
 
     np.save(os.path.join(folder_path, "{}.npy".format(filename)), labels)
+    os.replace("output/ex_time.txt", os.path.join(folder_path,"ex_time.txt"))
     o3d.io.write_point_cloud(os.path.join(folder_path, "{}.pcd".format(filename)), pcd)
