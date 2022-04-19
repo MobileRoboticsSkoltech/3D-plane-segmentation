@@ -244,7 +244,10 @@ int main(int argc, char ** argv){
         double t2 = cv::getTickCount();
         double time_elapsed = (t2-t1)/(double)cv::getTickFrequency();
         cout<<"Total time elapsed: "<<time_elapsed<<endl;
-
+        std::ofstream ex_time;
+        ex_time.open ("./output/" + std::to_string(i) + "/" +"ex_time.txt");
+        ex_time << "Elapsed(ms)=" << time_elapsed << std::endl;
+        ex_time.close();
         /* Uncomment this block to print model params
         for(int p_id=0; p_id<nr_planes;p_id++){
             cout<<"[Plane #"<<p_id<<"] with ";

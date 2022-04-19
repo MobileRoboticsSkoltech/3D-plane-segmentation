@@ -10,6 +10,14 @@
 #include <fstream>
 
 using namespace pdpc;
+std::string getFileName(std::string const &s) {
+    char sep = '/';
+    size_t i = s.rfind(sep, s.length());
+    if (i != std::string::npos) {
+        return(s.substr(i+1, s.length() - i - 6));
+    }
+    return("");
+}
 
 int main(int argc, char **argv)
 {
@@ -29,6 +37,10 @@ int main(int argc, char **argv)
 
     bool ok = opt.ok();
     if(!ok) return 1;
+
+    std::ofstream ex_time;
+    std::cout << getFileName(in_output) << std::endl;
+    ex_time.open("./output/" + getFileName(in_output) + "/" +"ex_time.txt", std::ios_base::app);
 
     PointCloud points;
     ok = Loader::Load(in_input, points, in_v);
@@ -57,6 +69,7 @@ int main(int argc, char **argv)
                     << " (" << comp_data[i].size() << " pts)";
         }
     }
+    clock_t start = clock();
 
     // Persistence range -------------------------------------------------------
     if(!in_ranges.empty())
@@ -184,6 +197,9 @@ int main(int argc, char **argv)
             }
         }
     }
-
+    clock_t stop = clock();
+    std::cout<<"END" << (double)(stop - start)/(CLOCKS_PER_SEC/1000)<<std::endl;
+    ex_time << "Elapsed(m2)=" << (double)(stop - start)/(CLOCKS_PER_SEC/1000) << std::endl;
+    ex_time.close();
     return 0;
 }

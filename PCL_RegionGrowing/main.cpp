@@ -1,4 +1,5 @@
 #include <iostream>
+#include <time.h>
 #include <vector>
 #include <experimental/filesystem>
 #include <fstream>
@@ -56,9 +57,16 @@ int main(int argc, char** argv) {
 
         RegionGrowing regionGrowing;
         std::vector<pcl::PointIndices> clusters;
-        regionGrowing.getClusters(cloud, clusters);
+        
+        double comp_time = regionGrowing.getClusters(cloud, clusters);
 
+        
         writeClustersInDataFolder(pathToPCD.path().string(), cloud, clusters);
+
+        std::ofstream ex_time;
+        ex_time.open ("./output/" + getFileName(pathToPCD.path().string()) + "/" +"ex_time.txt");
+        ex_time << "Elapsed(ms)=" << comp_time << std::endl;
+        ex_time.close();
     }
 
     return 0;

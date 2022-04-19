@@ -7,6 +7,8 @@ def create_colored_cloud():
     rootdir = "./input"
 
     for file in os.listdir(rootdir):
+        if "ex_time" in file:
+            continue
         file_path = os.path.join(rootdir, file)
         npy_path = os.path.join("./output", file[:-4], file[:-4] + ".npy")
         labels = np.load(npy_path)

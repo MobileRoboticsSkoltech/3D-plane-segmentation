@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <time.h>
 #include <sstream>
 #include <string>
 #include <rep/DDPFF.h>
@@ -57,8 +58,15 @@ int main() {
     auto * depth = new depthBuffer_t();
     read_pcd(*points);
     ddpff->setBuffers(points, colors, depth);
-
+    clock_t start = clock();
     ddpff->compute();
+    clock_t stop = clock();
+    std::ofstream ex_time;
+
+    ex_time.open ("output/ex_time.txt");
+    ex_time << "Elapsed(ms)=" << (double)(stop - start)/(CLOCKS_PER_SEC/1000) << std::endl;
+    ex_time.close();
+
     const std::vector<PlanePointNormal> & result = ddpff->getPlanes();
     for (const auto& plane : result) {
         std::cout << "Plane with " << plane.count << " points detected!" << std::endl;

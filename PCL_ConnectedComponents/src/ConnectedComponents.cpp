@@ -4,7 +4,7 @@ ConnectedComponents::ConnectedComponents(pcl::PointCloud<pcl::PointXYZRGBA>::Con
 {
 }
 
-void ConnectedComponents::SegmentCloud(std::vector<pcl::PointIndices>& clusters) {
+double ConnectedComponents::SegmentCloud(std::vector<pcl::PointIndices>& clusters) {
     pcl::PointCloud<pcl::Normal>::Ptr normal_cloud(new pcl::PointCloud<pcl::Normal>);
     ne_.setInputCloud(cloud);
     ne_.compute(*normal_cloud);
@@ -37,12 +37,15 @@ void ConnectedComponents::SegmentCloud(std::vector<pcl::PointIndices>& clusters)
         pcl::OrganizedConnectedComponentSegmentation<pcl::PointXYZRGBA, pcl::Label> euclidean_segmentation(
                 euclidean_cluster_comparator_);
         euclidean_segmentation.setInputCloud(cloud);
+        clock_t start = clock();
         euclidean_segmentation.segment(euclidean_labels, euclidean_label_indices);
-
+        clock_t stop = clock();
         for (auto & euclidean_label_indice : euclidean_label_indices) {
             if (euclidean_label_indice.indices.size() > 1000) {
                 clusters.push_back(euclidean_label_indice);
             }
         }
+        return (double)(stop - start)/(CLOCKS_PER_SEC/1000);
     }
+    return 0;
 }

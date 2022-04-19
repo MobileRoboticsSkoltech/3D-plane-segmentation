@@ -6,6 +6,7 @@
 #include <PDPC/ScaleSpace/ScaleSampling.h>
 #include <PDPC/MultiScaleFeatures/MultiScaleFeatures.h>
 #include <PDPC/RIMLS/RIMLSOperator.h>
+#include <fstream>
 
 #include <algorithm>
 #include <numeric>
@@ -40,6 +41,7 @@ int main(int argc, char **argv)
     if(!ok) return 1;
     const int point_count = points.size();
 
+    
     if(!points.has_normals())
     {
         error().iff(in_v) << "Normal vectors are required!";
@@ -47,6 +49,8 @@ int main(int argc, char **argv)
     }
 
     points.build_kdtree();
+    
+    clock_t start = clock();
 
     // 1. Scales ---------------------------------------------------------------
     info().iff(in_v) << "Computing " << in_scount << " scales";
@@ -187,6 +191,12 @@ int main(int argc, char **argv)
             } // for i
         }
     } // for j
+
+    clock_t stop = clock();
+    std::ofstream ex_time;
+    ex_time.open ("./output/" + in_output + "/" +"ex_time.txt", std::ios_base::app);
+    ex_time << "Elapsed(m0)=" << (double)(stop - start)/(CLOCKS_PER_SEC/1000) << std::endl;
+    ex_time.close();
 
     features.save(in_output + "_features.txt");
     scales.save(  in_output + "_scales.txt");

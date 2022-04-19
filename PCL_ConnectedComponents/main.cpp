@@ -1,4 +1,5 @@
 #include <iostream>
+#include <time.h>
 #include <pcl/point_types.h>
 #include <pcl/io/pcd_io.h>
 #include <pcl/visualization/cloud_viewer.h>
@@ -52,9 +53,16 @@ int main(int argc, char** argv) {
         pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud = readPointCloud(pathToRGB.path().string());
         ConnectedComponents connectedComponentsAlgorithm(cloud);
         std::vector<pcl::PointIndices> clusters;
-        connectedComponentsAlgorithm.SegmentCloud(clusters);
+        
+        double comp_time = connectedComponentsAlgorithm.SegmentCloud(clusters);
+        
 
         writeClustersInDataFolder(pathToRGB.path().string(), cloud, clusters);
+
+        std::ofstream ex_time;
+        ex_time.open ("./output/" + getFileName(pathToRGB.path().string()) + "/" +"ex_time.txt");
+        ex_time << "Elapsed(ms)=" << comp_time << std::endl;
+        ex_time.close();
     }
     return 0;
 }
