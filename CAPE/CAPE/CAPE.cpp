@@ -97,7 +97,7 @@ void CAPE::process(Eigen::MatrixXf & cloud_array, int & nr_planes_final, int & n
 			nr_remaining_planar_cells++;
 		}
 	}
-	Histogram H(20);
+	Histogram H(HISTOGRAM_BINS_PER_COORD_PARAM);
 	H.initHistogram(C,planar_flags);
 
 	// Initialization for cell-wise region growing and model fitting
@@ -117,7 +117,7 @@ void CAPE::process(Eigen::MatrixXf & cloud_array, int & nr_planes_final, int & n
 		vector<int> seed_candidates = H.getPointsFromMostFrequentBin();
 
 		// Checkpoint 1
-		if (seed_candidates.size()<5)
+		if (seed_candidates.size()<REGION_GROWING_CANDIDATE_SIZE_THRESHOLD_PARAM)
 			break;
 
 		// Select seed based on score
@@ -154,13 +154,13 @@ void CAPE::process(Eigen::MatrixXf & cloud_array, int & nr_planes_final, int & n
 		}
 
 		// Checkpoint 2
-		if (nr_cells_activated<4)
+		if (nr_cells_activated<REGION_GROWING_CELLS_ACTIVATED_THRESHOLD_PARAM)
 			continue;
 
 		new_ps.fitPlane();
 
 		// 4. Model fitting
-		if(new_ps.score>100){
+		if(new_ps.score>REGION_PLANAR_FITTING_PLANARITY_SCORE_THRESHOLD_PARAM){
 			// It is a plane
 			plane_segments.push_back(new_ps);
 			int nr_curr_planes = plane_segments.size();
@@ -177,7 +177,7 @@ void CAPE::process(Eigen::MatrixXf & cloud_array, int & nr_planes_final, int & n
 				}
 			}
 		}else{
-			if(cylinder_detection && nr_cells_activated>5){
+			if(cylinder_detection && nr_cells_activated>CYLINDER_DETECTION_CELLS_ACTIVATED_THRESHOLD_PARAM){
                 // It is an extrusion
 				CylinderSeg cy(Grid, activation_map, nr_cells_activated);
 				cylinder_segments.push_back(cy);
@@ -297,7 +297,7 @@ void CAPE::process(Eigen::MatrixXf & cloud_array, int & nr_planes_final, int & n
 				int offset = stacked_cell_id*nr_pts_per_cell;
 				int next_offset = offset+nr_pts_per_cell;
 				if(row_ptr[cell_c]>0){
-					float max_dist = 9*plane_segments[i].MSE;
+					float max_dist = REFINEMENT_MULTIPLIER_PARAM*plane_segments[i].MSE;
 					// Compute distance block
 					distances_cell_stacked = cloud_array.block(offset,0,nr_pts_per_cell,1).array()*nx
 						+ cloud_array.block(offset,1,nr_pts_per_cell,1).array()*ny

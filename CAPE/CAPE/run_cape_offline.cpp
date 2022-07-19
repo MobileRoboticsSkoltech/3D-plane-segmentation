@@ -17,8 +17,6 @@
 using namespace std;
 
 bool done = false;
-float COS_ANGLE_MAX = cos(M_PI/12);
-float MAX_MERGE_DIST = 50.0f;
 bool cylinder_detection= true;
 CAPE * plane_detector;
 std::vector<cv::Vec3b> color_code;
@@ -103,12 +101,9 @@ int main(int argc, char ** argv){
     bool show_visualization = false;
     stringstream string_buff;
 
-    int PATCH_SIZE;
-    if (argc>2){
-        PATCH_SIZE = atoi(argv[1]);
-        string_buff << "input/" << argv[2];
+    if (argc>1){
+        string_buff << "input/" << argv[1];
     }else {
-        PATCH_SIZE = 16;
         string_buff << "input";
     }
     for (int i = 1; i < argc; ++i) {
