@@ -99,26 +99,37 @@ void organizePointCloudByCell(Eigen::MatrixXf & cloud_in, Eigen::MatrixXf & clou
 int main(int argc, char ** argv){
 
     bool show_visualization = false;
-    stringstream string_buff;
+    stringstream input_path;
+    stringstream params_path;
 
-    if (argc>1){
-        string_buff << "input/" << argv[1];
-    }else {
-        string_buff << "input";
+    if (argc>2){
+        input_path << argv[1];
+        params_path << argv[2];
+    }else if (argc>1){
+        input_path << argv[1];
+    }else{
+        input_path << "input";
     }
     for (int i = 1; i < argc; ++i) {
-        if (std::string(argv[i]) == "--vis") {
+        if (string(argv[i]) == "--vis") {
             show_visualization = true;
-        } 
+        } else if (string(argv[i]) == "--help") {
+            cout << "usage:\n./cape_offline INPUT_DIR_PATH PARAMS_FILE_PATH\nor\n./run_cape_offline INPUT_DIR_PATH" << endl;
+            return 0;
+        }
     }
 
     // Get parameters
-    readIni(string_buff);
+    if (params_path.str().empty()) {
+        cout << "No parameters file specified. Using defaults." << endl;
+    } else {
+        readIni(params_path);
+    }
 
     // Get intrinsics
     cv::Mat K_rgb, K_ir, dist_coeffs_rgb, dist_coeffs_ir, R_stereo, t_stereo;
     stringstream calib_path;
-    calib_path<<string_buff.str()<<"/calib_params.xml";
+    calib_path << input_path.str() << "/calib_params.xml";
     loadCalibParameters(calib_path.str(), K_rgb, dist_coeffs_rgb, K_ir, dist_coeffs_ir, R_stereo, t_stereo);
     float fx_ir = K_ir.at<double>(0,0); float fy_ir = K_ir.at<double>(1,1);
     float cx_ir = K_ir.at<double>(0,2); float cy_ir = K_ir.at<double>(1,2);
@@ -132,7 +143,7 @@ int main(int argc, char ** argv){
     stringstream depth_img_path;
     stringstream save_path;
 
-    depth_img_path<<string_buff.str()<<"/depth_0.png";
+    depth_img_path << input_path.str() << "/depth_0.png";
 
     d_img = cv::imread(depth_img_path.str(),cv::IMREAD_ANYDEPTH);
 
@@ -198,7 +209,7 @@ int main(int argc, char ** argv){
     int frame_num = 0;
     DIR *dir;
     struct dirent *ent;
-    if ((dir = opendir (string_buff.str().c_str())) != NULL) {
+    if ((dir = opendir (input_path.str().c_str())) != NULL) {
         while ((ent = readdir (dir)) != NULL) {
             if(boost::algorithm::contains(ent->d_name, ".png")) frame_num++;
         }
@@ -219,7 +230,7 @@ int main(int argc, char ** argv){
 
         // Read depth image
         depth_img_path.str("");
-        depth_img_path<<string_buff.str()<<"/depth_"<<i<<".png";
+        depth_img_path << input_path.str() << "/depth_" << i << ".png";
 
         d_img = cv::imread(depth_img_path.str(), cv::IMREAD_ANYDEPTH);
         d_img.convertTo(d_img, CV_32F);
@@ -262,7 +273,7 @@ int main(int argc, char ** argv){
         // Map segments with color codes and overlap segmented image w/ RGB
         uchar * sCode;
         uchar * dColor;
-       
+
         int code;
         for(int r=0; r<  height; r++){
             dColor = seg_rz.ptr<uchar>(r);
@@ -275,7 +286,7 @@ int main(int argc, char ** argv){
                     dColor[c*3+1] = color_code[code-1][1]/2 ;
                     dColor[c*3+2] = color_code[code-1][2]/2 ;
                 }
-                sCode++; 
+                sCode++;
             }
         }
 
@@ -303,8 +314,8 @@ int main(int argc, char ** argv){
             cv::namedWindow("Seg");
             cv::imshow("Seg", seg_rz);
             cv::waitKey(1);
-        }   
-            
+        }
+
         i++;
     }
     return 0;

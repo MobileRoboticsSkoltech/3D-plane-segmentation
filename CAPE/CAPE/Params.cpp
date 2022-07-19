@@ -4,12 +4,12 @@
 
 #include "Params.h"
 
-double DEPTH_SIGMA_COEFF =  0.000001425;
-double DEPTH_SIGMA_MARGIN =  10;
+double DEPTH_SIGMA_COEFF = 0.000001425;
+double DEPTH_SIGMA_MARGIN = 10;
 double cylinder_score_min = 100;
 double cylinder_RANSAC_sqr_max_dist = 0.0225; // square of 15 %
 
-double COS_ANGLE_MAX = cos(M_PI/12);
+double COS_ANGLE_MAX = cos(M_PI / 12);
 double MAX_MERGE_DIST = 50.0;
 int PATCH_SIZE = 16;
 
@@ -25,15 +25,13 @@ int CYLINDER_DETECTION_CELLS_ACTIVATED_THRESHOLD_PARAM = 5;
 int REFINEMENT_MULTIPLIER_PARAM = 9;
 
 
-void readIni(stringstream &string_buff) {
-    std::stringstream params_buff;
-    params_buff << string_buff.str() << "/params.ini";
+void readIni(stringstream &params_buff) {
     ifstream fin(params_buff.str());
-    if(!fin.is_open()) {
-        cout<<"[iniLoad] "<<params_buff.str()<<" not found, use default parameters!"<<std::endl;
+    if (!fin.is_open()) {
+        cout << "[iniLoad] " << params_buff.str() << " not found, using defaults." << endl;
         return;
     }
-    while(fin) {
+    while (fin) {
         std::string line;
         std::getline(fin, line);
         if (line.empty() || line[0] == '#') continue;
