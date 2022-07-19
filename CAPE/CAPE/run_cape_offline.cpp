@@ -111,6 +111,10 @@ int main(int argc, char ** argv){
             show_visualization = true;
         } 
     }
+
+    // Get parameters
+    readIni(string_buff);
+
     // Get intrinsics
     cv::Mat K_rgb, K_ir, dist_coeffs_rgb, dist_coeffs_ir, R_stereo, t_stereo;
     stringstream calib_path;
