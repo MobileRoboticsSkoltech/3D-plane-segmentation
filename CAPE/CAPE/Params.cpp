@@ -7,7 +7,7 @@
 double DEPTH_SIGMA_COEFF =  0.000001425;
 double DEPTH_SIGMA_MARGIN =  10;
 double cylinder_score_min = 100;
-double cylinder_RANSAC_sqr_max_dist = 0.0225; /* square of 15 %*/
+double cylinder_RANSAC_sqr_max_dist = 0.0225; // square of 15 %
 
 double COS_ANGLE_MAX = cos(M_PI/12);
 double MAX_MERGE_DIST = 50.0;
@@ -15,7 +15,7 @@ int PATCH_SIZE = 16;
 
 double MIN_NR_OF_VALID_POINTS_FACTOR = 2; // here it means, min_nr_pts = nr_pts_per_cell/2;
 double PLANESEG_MAX_DIFF = 100;
-int PLANAR_FITTING_JUMPS_COUNTER_THRESHOLD_PARAM = 1;
+int PLANESEG_JUMP_NUMBER_THRESHOLD_PARAM = 1;
 
 int HISTOGRAM_BINS_PER_COORD_PARAM = 20;
 int REGION_GROWING_CANDIDATE_SIZE_THRESHOLD_PARAM = 5;
@@ -64,7 +64,7 @@ void readIni(stringstream &string_buff) {
         else if (key == "planesegMaxDiff")
             PLANESEG_MAX_DIFF = strtol(value.c_str(), nullptr, 0);
         else if (key == "planarFittingJumpsCounterThresholdParam")
-            PLANAR_FITTING_JUMPS_COUNTER_THRESHOLD_PARAM = strtol(value.c_str(), nullptr, 0);
+            PLANESEG_JUMP_NUMBER_THRESHOLD_PARAM = strtol(value.c_str(), nullptr, 0);
         else if (key == "histogramBinsPerCoordParam")
             HISTOGRAM_BINS_PER_COORD_PARAM = strtol(value.c_str(), nullptr, 0);
         else if (key == "regionGrowingCandidateSizeThresholdParam")

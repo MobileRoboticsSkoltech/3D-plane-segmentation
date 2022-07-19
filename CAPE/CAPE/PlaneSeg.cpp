@@ -48,7 +48,7 @@ PlaneSeg::PlaneSeg(Eigen::MatrixXf & cloud_array, int cell_id, int nr_pts_per_ce
 		}
 		i++;
 	}
-	if (jumps_counter>PLANAR_FITTING_JUMPS_COUNTER_THRESHOLD_PARAM){
+	if (jumps_counter > PLANESEG_JUMP_NUMBER_THRESHOLD_PARAM){
 		planar = false;
 		return;
 	}
@@ -69,7 +69,7 @@ PlaneSeg::PlaneSeg(Eigen::MatrixXf & cloud_array, int cell_id, int nr_pts_per_ce
 		}
 		i+=cell_width;
 	}
-	if (jumps_counter>PLANAR_FITTING_JUMPS_COUNTER_THRESHOLD_PARAM){
+	if (jumps_counter > PLANESEG_JUMP_NUMBER_THRESHOLD_PARAM){
 		planar = false;
 		return;
 	}
