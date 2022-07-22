@@ -100,6 +100,7 @@ void organizePointCloudByCell(Eigen::MatrixXf & cloud_in, Eigen::MatrixXf & clou
 int main(int argc, char ** argv){
 
     bool show_visualization = false;
+    bool save_image = false;
     stringstream input_path;
     stringstream params_path;
 
@@ -117,6 +118,8 @@ int main(int argc, char ** argv){
         } else if (string(argv[i]) == "--help") {
             cout << "usage:\n./cape_offline INPUT_DIR_PATH PARAMS_FILE_PATH\nor\n./run_cape_offline INPUT_DIR_PATH" << endl;
             return 0;
+        } else if (string(argv[i]) == "--save-img") {
+            save_image = true;
         }
     }
 
@@ -256,7 +259,7 @@ int main(int argc, char ** argv){
         double time_elapsed = (t2-t1)/(double)cv::getTickFrequency();
         cout<<"Total time elapsed: "<<time_elapsed<<endl;
 
-        writeLabels("output/labels.csv", height, width, seg_output);
+        writeLabelsTable("output/labels.csv", 1, width * height, seg_output);
 
         /* Uncomment this block to print model params
         for(int p_id=0; p_id<nr_planes;p_id++){
@@ -273,54 +276,55 @@ int main(int argc, char ** argv){
         }
         */
 
-        // Map segments with color codes and overlap segmented image w/ RGB
-        uchar * sCode;
-        uchar * dColor;
+        if (save_image) {
+            // Map segments with color codes and overlap segmented image w/ RGB
+            uchar * sCode;
+            uchar * dColor;
 
-        int code;
-        for(int r=0; r<  height; r++){
-            dColor = seg_rz.ptr<uchar>(r);
-            sCode = seg_output.ptr<uchar>(r);
+            int code;
+            for(int r=0; r<  height; r++){
+                dColor = seg_rz.ptr<uchar>(r);
+                sCode = seg_output.ptr<uchar>(r);
 
-            for(int c=0; c< width; c++){
-                code = *sCode;
-                if (code>0){
-                    dColor[c*3] =   color_code[code-1][0]/2 ;
-                    dColor[c*3+1] = color_code[code-1][1]/2 ;
-                    dColor[c*3+2] = color_code[code-1][2]/2 ;
+                for(int c=0; c< width; c++){
+                    code = *sCode;
+                    if (code>0){
+                        dColor[c*3] =   color_code[code-1][0]/2 ;
+                        dColor[c*3+1] = color_code[code-1][1]/2 ;
+                        dColor[c*3+2] = color_code[code-1][2]/2 ;
+                    }
+                    sCode++;
                 }
-                sCode++;
+            }
+
+            /*
+            // Show frame rate and labels
+            cv::rectangle(seg_rz,  cv::Point(0,0),cv::Point(width,20), cv::Scalar(0,0,0),-1);
+            std::stringstream fps;
+            fps<<(int)(1/time_elapsed+0.5)<<" fps";
+            cv::putText(seg_rz, fps.str(), cv::Point(15,15), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255,255,255,1));
+            cout<<"Nr cylinders:"<<nr_cylinders<<endl;
+            int cylinder_code_offset = 50;
+            // show cylinder labels
+            if (nr_cylinders>0){
+                std::stringstream text;
+                text<<"Cylinders:";
+                cv::putText(seg_rz, text.str(), cv::Point(width/2,15), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255,255,255,1));
+                for(int j=0;j<nr_cylinders;j++){
+                    cv::rectangle(seg_rz,  cv::Point(width/2 + 80+15*j,6),cv::Point(width/2 + 90+15*j,16), cv::Scalar(color_code[cylinder_code_offset+j][0],color_code[cylinder_code_offset+j][1],color_code[cylinder_code_offset+j][2]),-1);
+                }
+            }
+             */
+
+            save_path.str("");
+            save_path << "output/segment_" << i << ".png";
+            cv::imwrite(save_path.str(), seg_rz);
+            if (show_visualization) {
+                cv::namedWindow("Seg");
+                cv::imshow("Seg", seg_rz);
+                cv::waitKey(1);
             }
         }
-
-        /*
-        // Show frame rate and labels
-        cv::rectangle(seg_rz,  cv::Point(0,0),cv::Point(width,20), cv::Scalar(0,0,0),-1);
-        std::stringstream fps;
-        fps<<(int)(1/time_elapsed+0.5)<<" fps";
-        cv::putText(seg_rz, fps.str(), cv::Point(15,15), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255,255,255,1));
-        cout<<"Nr cylinders:"<<nr_cylinders<<endl;
-        int cylinder_code_offset = 50;
-        // show cylinder labels
-        if (nr_cylinders>0){
-            std::stringstream text;
-            text<<"Cylinders:";
-            cv::putText(seg_rz, text.str(), cv::Point(width/2,15), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255,255,255,1));
-            for(int j=0;j<nr_cylinders;j++){
-                cv::rectangle(seg_rz,  cv::Point(width/2 + 80+15*j,6),cv::Point(width/2 + 90+15*j,16), cv::Scalar(color_code[cylinder_code_offset+j][0],color_code[cylinder_code_offset+j][1],color_code[cylinder_code_offset+j][2]),-1);
-            }
-        }
-         */
-
-        save_path.str("");
-        save_path << "output/segment_" << i << ".png";
-        cv::imwrite(save_path.str(), seg_rz);
-        if (show_visualization) {
-            cv::namedWindow("Seg");
-            cv::imshow("Seg", seg_rz);
-            cv::waitKey(1);
-        }
-
         i++;
     }
     return 0;

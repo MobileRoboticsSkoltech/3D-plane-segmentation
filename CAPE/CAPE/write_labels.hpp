@@ -13,12 +13,12 @@
 using namespace std;
 
 template<class T>
-void writeLabels(const string &path, size_t height, size_t width, cv::Mat_<T> &seg_output) {
+void writeLabelsTable(const string &path, size_t height, size_t width, cv::Mat_<T> &data) {
     T *sCode;
     ofstream fout(path);
 
     for (int r = 0; r < height; r++) {
-        sCode = seg_output.template ptr<T>(r);
+        sCode = data.template ptr<T>(r);
         for (int c = 0; c < width; c++) {
             fout << +*sCode << ',';
             sCode++;
