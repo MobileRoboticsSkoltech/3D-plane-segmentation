@@ -369,7 +369,7 @@ void CAPE::process(Eigen::MatrixXf & cloud_array, int & nr_planes_final, int & n
 					int offset = stacked_cell_id*nr_pts_per_cell;
 					int next_offset = offset+nr_pts_per_cell;
 					if(row_ptr[cell_c]>0){
-						float max_dist = 9*cylinder_segments[reg_id].MSEs[sub_reg_id];
+						float max_dist = REFINEMENT_MULTIPLIER_PARAM*cylinder_segments[reg_id].MSEs[sub_reg_id];
 						// Update cells
 						int j=0;
 						for(int pt = offset; pt<next_offset;j++,pt++){

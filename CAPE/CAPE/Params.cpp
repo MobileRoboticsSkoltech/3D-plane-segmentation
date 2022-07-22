@@ -48,19 +48,19 @@ void readIni(stringstream &params_buff) {
         else if (key == "depthSigmaMargin")
             DEPTH_SIGMA_MARGIN = strtod(value.c_str(), nullptr);
         else if (key == "cylinderScoreMin")
-            cylinder_score_min = strtol(value.c_str(), nullptr, 0);
+            cylinder_score_min = strtod(value.c_str(), nullptr);
         else if (key == "cylinderRansacSqrMaxDist")
             cylinder_RANSAC_sqr_max_dist = strtod(value.c_str(), nullptr);
         else if (key == "cosAngleMax")
             COS_ANGLE_MAX = strtod(value.c_str(), nullptr);
         else if (key == "maxMergeDist")
-            MAX_MERGE_DIST = strtol(value.c_str(), nullptr, 0);
+            MAX_MERGE_DIST = strtod(value.c_str(), nullptr);
         else if (key == "patchSize")
             PATCH_SIZE = strtol(value.c_str(), nullptr, 0);
         else if (key == "minNrOfValidPointsOnePerXThreshold")
             MIN_NR_OF_VALID_POINTS_FACTOR = strtod(value.c_str(), nullptr);
         else if (key == "planesegMaxDiff")
-            PLANESEG_MAX_DIFF = strtol(value.c_str(), nullptr, 0);
+            PLANESEG_MAX_DIFF = strtod(value.c_str(), nullptr);
         else if (key == "planarFittingJumpsCounterThresholdParam")
             PLANESEG_JUMP_NUMBER_THRESHOLD_PARAM = strtol(value.c_str(), nullptr, 0);
         else if (key == "histogramBinsPerCoordParam")
@@ -71,6 +71,8 @@ void readIni(stringstream &params_buff) {
             REGION_GROWING_CELLS_ACTIVATED_THRESHOLD_PARAM = strtol(value.c_str(), nullptr, 0);
         else if (key == "regionPlanarFittingPlanarityScoreThresholdParam")
             REGION_PLANAR_FITTING_PLANARITY_SCORE_THRESHOLD_PARAM = strtod(value.c_str(), nullptr);
+        else if (key == "cylinderDetectionCellsActivatedThreshold")
+            CYLINDER_DETECTION_CELLS_ACTIVATED_THRESHOLD_PARAM = strtol(value.c_str(), nullptr, 0);
         else if (key == "refinementMultiplierParam")
             REFINEMENT_MULTIPLIER_PARAM = strtol(value.c_str(), nullptr, 0);
     }
