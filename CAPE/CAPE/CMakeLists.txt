@@ -6,9 +6,9 @@ find_package(OpenCV REQUIRED)
 find_package(Eigen3 REQUIRED)
 
 
-set (CMAKE_CXX_FLAGS "-O0")
+set (CMAKE_CXX_FLAGS "-O2")
 
-#set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_BUILD_TYPE Release)
 
 include_directories(${EIGEN3_INCLUDE_DIR})
 

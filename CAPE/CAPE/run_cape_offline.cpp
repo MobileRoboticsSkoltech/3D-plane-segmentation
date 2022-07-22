@@ -259,7 +259,7 @@ int main(int argc, char ** argv){
         double time_elapsed = (t2-t1)/(double)cv::getTickFrequency();
         cout<<"Total time elapsed: "<<time_elapsed<<endl;
 
-        writeLabelsTable("output/labels.csv", 1, width * height, seg_output);
+        writeLabelsTable("output/labels.csv", height, width, seg_output);
 
         /* Uncomment this block to print model params
         for(int p_id=0; p_id<nr_planes;p_id++){
@@ -296,25 +296,6 @@ int main(int argc, char ** argv){
                     sCode++;
                 }
             }
-
-            /*
-            // Show frame rate and labels
-            cv::rectangle(seg_rz,  cv::Point(0,0),cv::Point(width,20), cv::Scalar(0,0,0),-1);
-            std::stringstream fps;
-            fps<<(int)(1/time_elapsed+0.5)<<" fps";
-            cv::putText(seg_rz, fps.str(), cv::Point(15,15), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255,255,255,1));
-            cout<<"Nr cylinders:"<<nr_cylinders<<endl;
-            int cylinder_code_offset = 50;
-            // show cylinder labels
-            if (nr_cylinders>0){
-                std::stringstream text;
-                text<<"Cylinders:";
-                cv::putText(seg_rz, text.str(), cv::Point(width/2,15), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255,255,255,1));
-                for(int j=0;j<nr_cylinders;j++){
-                    cv::rectangle(seg_rz,  cv::Point(width/2 + 80+15*j,6),cv::Point(width/2 + 90+15*j,16), cv::Scalar(color_code[cylinder_code_offset+j][0],color_code[cylinder_code_offset+j][1],color_code[cylinder_code_offset+j][2]),-1);
-                }
-            }
-             */
 
             save_path.str("");
             save_path << "output/segment_" << i << ".png";
