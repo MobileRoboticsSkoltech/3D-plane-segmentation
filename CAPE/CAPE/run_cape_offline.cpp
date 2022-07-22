@@ -145,7 +145,8 @@ int main(int argc, char ** argv){
     int width, height;
     stringstream image_path;
     stringstream depth_img_path;
-    stringstream save_path;
+    stringstream image_save_path;
+    stringstream labels_save_path;
 
     depth_img_path << input_path.str() << "/depth_0.png";
 
@@ -259,7 +260,6 @@ int main(int argc, char ** argv){
         double time_elapsed = (t2-t1)/(double)cv::getTickFrequency();
         cout<<"Total time elapsed: "<<time_elapsed<<endl;
 
-        writeLabelsTable("output/labels.csv", height, width, seg_output);
 
         /* Uncomment this block to print model params
         for(int p_id=0; p_id<nr_planes;p_id++){
@@ -275,6 +275,11 @@ int main(int argc, char ** argv){
             cout<<"radius: "<<cylinder_params[c_id].radii[0]<<endl;
         }
         */
+
+
+        labels_save_path.str("");
+        labels_save_path << "output/labels_" << i << ".csv";
+        writeLabelsTable(labels_save_path.str(), height, width, seg_output);
 
         if (save_image) {
             // Map segments with color codes and overlap segmented image w/ RGB
@@ -297,14 +302,14 @@ int main(int argc, char ** argv){
                 }
             }
 
-            save_path.str("");
-            save_path << "output/segment_" << i << ".png";
-            cv::imwrite(save_path.str(), seg_rz);
-            if (show_visualization) {
-                cv::namedWindow("Seg");
-                cv::imshow("Seg", seg_rz);
-                cv::waitKey(1);
-            }
+            image_save_path.str("");
+            image_save_path << "output/segment_" << i << ".png";
+            cv::imwrite(image_save_path.str(), seg_rz);
+        }
+        if (show_visualization) {
+            cv::namedWindow("Seg");
+            cv::imshow("Seg", seg_rz);
+            cv::waitKey(1);
         }
         i++;
     }
