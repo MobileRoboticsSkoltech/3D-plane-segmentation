@@ -13,11 +13,12 @@
 #include <string>
 #include <dirent.h>
 #include <boost/algorithm/string.hpp>
+#include "write_labels.hpp"
 
 using namespace std;
 
 bool done = false;
-bool cylinder_detection= true;
+bool cylinder_detection= false;
 CAPE * plane_detector;
 std::vector<cv::Vec3b> color_code;
 
@@ -255,6 +256,8 @@ int main(int argc, char ** argv){
         double time_elapsed = (t2-t1)/(double)cv::getTickFrequency();
         cout<<"Total time elapsed: "<<time_elapsed<<endl;
 
+        writeLabels("output/labels.csv", height, width, seg_output);
+
         /* Uncomment this block to print model params
         for(int p_id=0; p_id<nr_planes;p_id++){
             cout<<"[Plane #"<<p_id<<"] with ";
@@ -290,6 +293,7 @@ int main(int argc, char ** argv){
             }
         }
 
+        /*
         // Show frame rate and labels
         cv::rectangle(seg_rz,  cv::Point(0,0),cv::Point(width,20), cv::Scalar(0,0,0),-1);
         std::stringstream fps;
@@ -306,6 +310,7 @@ int main(int argc, char ** argv){
                 cv::rectangle(seg_rz,  cv::Point(width/2 + 80+15*j,6),cv::Point(width/2 + 90+15*j,16), cv::Scalar(color_code[cylinder_code_offset+j][0],color_code[cylinder_code_offset+j][1],color_code[cylinder_code_offset+j][2]),-1);
             }
         }
+         */
 
         save_path.str("");
         save_path << "output/segment_" << i << ".png";

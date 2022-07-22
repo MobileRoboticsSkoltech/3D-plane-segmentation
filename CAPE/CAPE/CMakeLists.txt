@@ -6,9 +6,9 @@ find_package(OpenCV REQUIRED)
 find_package(Eigen3 REQUIRED)
 
 
-set (CMAKE_CXX_FLAGS "-O2")
+set (CMAKE_CXX_FLAGS "-O0")
 
-set(CMAKE_BUILD_TYPE Release)
+#set(CMAKE_BUILD_TYPE Release)
 
 include_directories(${EIGEN3_INCLUDE_DIR})
 
@@ -18,7 +18,7 @@ add_executable(cape_offline
 	PlaneSeg.cpp
 	CylinderSeg.cpp
 	Histogram.cpp
-	Params.cpp)
+	Params.cpp write_labels.hpp)
 
 target_link_libraries(cape_offline ${OpenCV_LIBS} ${Eigen_LIBRARIES})
 
