@@ -7,20 +7,8 @@
 
 struct Config
 {
-    real_t systemIterationTime;
-    real_t debugLevel;
-    real_t bufferSize;
 
     int sampleFactor;
-
-    // scene camera parameters
-    real_t sceneCameraRoll;
-    real_t sceneCameraPitch;
-    real_t sceneCameraYaw;
-    real_t sceneCameraX;
-    real_t sceneCameraY;
-    real_t sceneCameraZ;
-    real_t sceneRadius;
 
     // flood fill parameters
     real_t pointThresholdFloodFill_min;
@@ -45,7 +33,7 @@ struct Config
 	Config();
     ~Config(){}
 
-	void init();
+	void read_ini(const char* cfg_path);
 
 private:
     real_t sink;
