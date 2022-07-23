@@ -2,6 +2,8 @@
 #include "globals/constants.h"
 
 #include <iostream>
+#include <fstream>
+#include <string>
 
 // The global config object contains application wide configuration variables.
 // Basically, the config object is a globally accessible struct with public
@@ -28,19 +30,7 @@ Config config;
 
 Config::Config()
 {
-    systemIterationTime = 0.05;
-    debugLevel = -1;
-    bufferSize = 10;
     sampleFactor = 1;
-
-    // scene camera parameters
-    sceneCameraRoll = 0;
-    sceneCameraPitch = 0.80;
-    sceneCameraYaw = 0;
-    sceneCameraX = 0;
-    sceneCameraY = 0;
-    sceneCameraZ = 2;
-    sceneRadius = 10;
 
     // flood fill parameters
     pointThresholdFloodFill_min = 0.01;
@@ -61,11 +51,29 @@ Config::Config()
     c_angle = 1;
 }
 
-// The init() method should be called after construction.
-// Here, all config variables are registered to build a descriptor meta
-// structure that allows index and key based access to their values.
-// If you don't want to see a certain member on the gui, there is no
-// need to register it.
-void Config::init()
-{
+void Config::read_ini(const char* cfg_path){
+    std::ifstream input(cfg_path);
+
+    std::string line;
+    while (std::getline(input, line)){
+    	if (line[0] == '[' || line[0] == '\n' || line.empty()) continue;
+        std::string param_name = line.substr(0, line.find('='));
+        real_t value = std::stod(line.substr(line.find('=') + 1));
+        if (param_name == "floodFill.pointThreshold_min") config.pointThresholdFloodFill_min = value;
+        else if (param_name == "floodFill.pointThreshold_max") config.pointThresholdFloodFill_max = value;
+        else if (param_name == "floodFill.planeThreshold_flood") config.planeThresholdFloodFill_flood = value;
+        else if (param_name == "floodFill.planeThreshold_merge") config.planeThresholdFloodFill_merge = value;
+        else if (param_name == "floodFill.planeThreshold_flood_max") config.planeThresholdFloodFill_flood_max = value;
+        else if (param_name == "floodFill.planeThreshold_merge_max") config.planeThresholdFloodFill_merge_max = value;
+        else if (param_name == "floodFill.angleThresholdFloodFill") config.angleThresholdFloodFill = value;
+        else if (param_name == "floodFill.angleThresholdFloodFill_max") config.angleThresholdFloodFill_max = value;
+        else if (param_name == "floodFill.minPlaneSize") config.minPlaneSize = value;
+        else if (param_name == "floodFill.normalSampleDistance_min") config.normalSampleDistance_min = value;
+        else if (param_name == "floodFill.normalSampleDistance_max") config.normalSampleDistance_max = value;
+        else if (param_name == "floodFill.c_plane") config.c_plane = value;
+        else if (param_name == "floodFill.c_plane_merge") config.c_plane_merge = value;
+        else if (param_name == "floodFill.c_point") config.c_point = value;
+        else if (param_name == "floodFill.c_angle") config.c_angle = value;
+        else if (param_name == "floodFill.c_range") config.c_range = value;
+    }
 }
