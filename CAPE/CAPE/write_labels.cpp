@@ -11,7 +11,9 @@ void writeLabelsTable(const string &path, size_t height, size_t width, cv::Mat_<
     for (int r = 0; r < height; r++) {
         sCode = data.ptr<uchar>(r);
         for (int c = 0; c < width; c++) {
-            fout << +(*sCode) << ',';
+            fout << +(*sCode);
+            if (c != width - 1)
+                fout << ',';
             sCode++;
         }
         fout << '\n';
