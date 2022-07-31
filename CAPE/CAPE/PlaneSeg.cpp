@@ -8,14 +8,13 @@
 PlaneSeg::PlaneSeg(Eigen::MatrixXf & cloud_array, int cell_id, int nr_pts_per_cell, int cell_width)
 {
 	nr_pts = 0;
-	min_nr_pts = nr_pts_per_cell/2;
+	min_nr_pts = nr_pts_per_cell/MIN_NR_OF_VALID_POINTS_FACTOR;
 	int offset = cell_id*nr_pts_per_cell;
 	int cell_height = nr_pts_per_cell/cell_width;
 	x_acc = 0; y_acc = 0; z_acc = 0;
 	xx_acc = 0; yy_acc = 0; zz_acc = 0;
 	xy_acc = 0; xz_acc = 0; yz_acc = 0;
 	int nan_counter = 0;
-	double max_diff = 100;
 	int max_pt_id = offset+nr_pts_per_cell;
 	planar = true;
 
@@ -41,7 +40,7 @@ PlaneSeg::PlaneSeg(Eigen::MatrixXf & cloud_array, int cell_id, int nr_pts_per_ce
 	// Scan horizontally through the middle
 	while(i<j){
 		z = Z_matrix(i);
-		if(z>0 && abs(z-z_last)<max_diff){
+		if(z>0 && abs(z-z_last)<PLANESEG_MAX_DIFF){
 			z_last = z;
 		}else{
 			if(z>0)
@@ -49,7 +48,7 @@ PlaneSeg::PlaneSeg(Eigen::MatrixXf & cloud_array, int cell_id, int nr_pts_per_ce
 		}
 		i++;
 	}
-	if (jumps_counter>1){
+	if (jumps_counter > PLANESEG_JUMP_NUMBER_THRESHOLD_PARAM){
 		planar = false;
 		return;
 	}
@@ -62,7 +61,7 @@ PlaneSeg::PlaneSeg(Eigen::MatrixXf & cloud_array, int cell_id, int nr_pts_per_ce
 	jumps_counter = 0;
 	while(i<j){
 		z = Z_matrix(i);
-		if(z>0 && abs(z-z_last)<max_diff){
+		if(z>0 && abs(z-z_last)<PLANESEG_MAX_DIFF){
 			z_last = z;
 		}else{
 			if(z>0)
@@ -70,7 +69,7 @@ PlaneSeg::PlaneSeg(Eigen::MatrixXf & cloud_array, int cell_id, int nr_pts_per_ce
 		}
 		i+=cell_width;
 	}
-	if (jumps_counter>1){
+	if (jumps_counter > PLANESEG_JUMP_NUMBER_THRESHOLD_PARAM){
 		planar = false;
 		return;
 	}

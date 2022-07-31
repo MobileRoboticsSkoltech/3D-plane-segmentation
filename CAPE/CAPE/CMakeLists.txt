@@ -17,7 +17,8 @@ add_executable(cape_offline
 	CAPE.cpp
 	PlaneSeg.cpp
 	CylinderSeg.cpp
-	Histogram.cpp)
+	Histogram.cpp
+	Params.cpp write_labels.hpp)
 
 target_link_libraries(cape_offline ${OpenCV_LIBS} ${Eigen_LIBRARIES})
 
