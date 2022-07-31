@@ -13,7 +13,7 @@
 #include <string>
 #include <dirent.h>
 #include <boost/algorithm/string.hpp>
-#include "write_labels.hpp"
+#include "write_labels.h"
 
 using namespace std;
 
